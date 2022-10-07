@@ -26,7 +26,7 @@ func initBot(k *KumaEngine) {
 	k.Session.AddHandler(command.CommandHandler)
 }
 
-func (k KumaEngine) Create() (*KumaEngine, error) {
+func (k *KumaEngine) Create() (*KumaEngine, error) {
 	log.Logger.Infof("KumaEngine %s", KUMA_ENGINE_VERSION)
 	var err error
 	k.Session, err = discordgo.New("Bot " + k.Token)
@@ -34,12 +34,12 @@ func (k KumaEngine) Create() (*KumaEngine, error) {
 		return nil, err
 	}
 
-	initBot(&k)
+	initBot(k)
 
-	return &k, nil
+	return k, nil
 }
 
-func (k KumaEngine) CreateIntents() (*KumaEngine, error) {
+func (k *KumaEngine) CreateIntents() (*KumaEngine, error) {
 	engine, err := k.Create()
 	if err != nil {
 		return nil, err
@@ -50,27 +50,27 @@ func (k KumaEngine) CreateIntents() (*KumaEngine, error) {
 	return engine, nil
 }
 
-func (k KumaEngine) RegisterEvent(event interface{}) func() {
+func (k *KumaEngine) RegisterEvent(event interface{}) func() {
 	return k.Session.AddHandler(event)
 }
 
-func (k KumaEngine) RegisterEventOnce(event interface{}) func() {
+func (k *KumaEngine) RegisterEventOnce(event interface{}) func() {
 	return k.Session.AddHandlerOnce(event)
 }
 
-func (k KumaEngine) SetActivity(a *discordgo.Activity) {
+func (k *KumaEngine) SetActivity(a *discordgo.Activity) {
 	act = append(act, a)
 }
 
-func (k KumaEngine) SetActivities(a ...*discordgo.Activity) {
+func (k *KumaEngine) SetActivities(a ...*discordgo.Activity) {
 	act = append(act, a...)
 }
 
-func (k KumaEngine) Version() string {
+func (k *KumaEngine) Version() string {
 	return KUMA_ENGINE_VERSION
 }
 
-func (k KumaEngine) Build() error {
+func (k *KumaEngine) Build() error {
 	err := k.Session.Open()
 	if err != nil {
 		return err
@@ -98,7 +98,7 @@ func (k KumaEngine) Build() error {
 	return nil
 }
 
-func (k KumaEngine) Close() error {
+func (k *KumaEngine) Close() error {
 	err := k.Session.Close()
 	if err != nil {
 		return err
