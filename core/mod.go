@@ -27,7 +27,7 @@ func initBot(k *KumaEngine) {
 }
 
 func (k KumaEngine) Create() (*KumaEngine, error) {
-	log.Logger.Infof("KumaEngine %s", KUMA_ENGINE_VERSION)
+	log.Logger.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	var err error
 	k.Session, err = discordgo.New("Bot " + k.Token)
 	if err != nil {
@@ -107,7 +107,7 @@ func (k *KumaEngine) Close() error {
 	return nil
 }
 
-func CreateInturruptSigal() {
+func CreateInturruptSignal() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, syscall.SIGTERM)
 	<-sc
