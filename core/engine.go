@@ -26,7 +26,7 @@ func initBot(k *KumaEngine) {
 	k.Session.AddHandler(command.CommandHandler)
 }
 
-func (k *KumaEngine) Create() (*KumaEngine, error) {
+func (k KumaEngine) Create() (*KumaEngine, error) {
 	log.Logger.Infof("KumaEngine %s", KUMA_ENGINE_VERSION)
 	var err error
 	k.Session, err = discordgo.New("Bot " + k.Token)
@@ -34,12 +34,12 @@ func (k *KumaEngine) Create() (*KumaEngine, error) {
 		return nil, err
 	}
 
-	initBot(k)
+	initBot(&k)
 
-	return k, nil
+	return &k, nil
 }
 
-func (k *KumaEngine) CreateIntents() (*KumaEngine, error) {
+func (k KumaEngine) CreateIntents() (*KumaEngine, error) {
 	engine, err := k.Create()
 	if err != nil {
 		return nil, err
