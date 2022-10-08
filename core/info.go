@@ -11,6 +11,8 @@ import (
 	"runtime"
 )
 
+const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
+
 var KumaInfo = command.Command{
 	Data: &discordgo.ApplicationCommand{
 		Name:        "kumainfo",
@@ -21,6 +23,11 @@ var KumaInfo = command.Command{
 		embed := utils.Embed{
 			Title:       fmt.Sprintf("%s **KumaInfo**", emoji.Dart),
 			Description: "KumaEngine system information",
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL:    logo,
+				Width:  512,
+				Height: 512,
+			},
 			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name:   fmt.Sprintf("%s **ENGINE VERSION**", emoji.ElectricPlug),
