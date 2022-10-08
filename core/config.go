@@ -1,5 +1,5 @@
 package core
 
 const (
-	KUMA_ENGINE_VERSION = "v0.1.4"
+	KUMA_ENGINE_VERSION = "v0.1.5"
 )

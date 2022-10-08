@@ -22,10 +22,6 @@ type KumaEngine struct {
 	Session *discordgo.Session
 }
 
-func initBot(k *KumaEngine) {
-	k.Session.AddHandler(command.CommandHandler)
-}
-
 func (k KumaEngine) Create() (*KumaEngine, error) {
 	log.Logger.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	var err error
@@ -34,7 +30,7 @@ func (k KumaEngine) Create() (*KumaEngine, error) {
 		return nil, err
 	}
 
-	initBot(&k)
+	k.Session.AddHandler(command.CommandHandler)
 
 	return &k, nil
 }
