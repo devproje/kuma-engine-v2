@@ -31,6 +31,7 @@ func (k KumaEngine) Create() (*KumaEngine, error) {
 	}
 
 	k.Session.AddHandler(command.CommandHandler)
+	command.RegisterCommand(KumaInfo)
 
 	return &k, nil
 }
