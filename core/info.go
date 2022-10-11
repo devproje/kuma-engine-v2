@@ -2,13 +2,14 @@ package core
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
+	"runtime"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/command"
 	"github.com/devproje/kuma-engine/emoji"
 	"github.com/devproje/kuma-engine/utils"
-	"math/rand"
-	"os"
-	"runtime"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
