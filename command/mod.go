@@ -35,19 +35,57 @@ func QueryCommandList() []*discordgo.ApplicationCommandOptionChoice {
 	return list
 }
 
+// Deprecated: Use AddCommand(cmd Command) instead
 func RegisterCommand(cmd Command) {
+	AddCommand(cmd)
+}
+
+// Deprecated: Use AddCommands(cmds ...Command) instead
+func RegisterCommands(cmds ...Command) {
+	AddCommands(cmds...)
+}
+
+func AddCommand(cmd Command) {
 	Commands = append(Commands, cmd)
 }
 
-func RegisterCommands(cmds ...Command) {
+func AddCommands(cmds ...Command) {
 	Commands = append(Commands, cmds...)
+}
+
+func DropCommand(cmd Command) {
+	for i, j := range Commands {
+		if j.Data.Name == cmd.Data.Name {
+			Commands = append(Commands[:i], Commands[i+1:]...)
+		}
+	}
 }
 
 func IsCommandNull() bool {
 	return len(Commands) == 0
 }
 
+// Deprecated: Use AddData(session *discordgo.Session) instead
 func RegisterData(session *discordgo.Session) error {
+	err := AddData(session)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Deprecated: Use DropData(session *discordgo.Session) instead
+func UnregisterData(session *discordgo.Session) error {
+	err := DropData(session)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func AddData(session *discordgo.Session) error {
 	for i, j := range Commands {
 		log.Logger.Infof("Register command %s data (%d/%d)", j.Data.Name, i+1, len(Commands))
 		_, err := session.ApplicationCommandCreate(session.State.User.ID, "", j.Data)
@@ -59,7 +97,7 @@ func RegisterData(session *discordgo.Session) error {
 	return nil
 }
 
-func UnregisterData(session *discordgo.Session) error {
+func DropData(session *discordgo.Session) error {
 	commands, err := session.ApplicationCommands(session.State.User.ID, "")
 	if err != nil {
 		return err
@@ -70,6 +108,24 @@ func UnregisterData(session *discordgo.Session) error {
 		err = session.ApplicationCommandDelete(session.State.User.ID, "", i.ID)
 		if err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+func DropDataManual(session *discordgo.Session, command Command) error {
+	commands, err := session.ApplicationCommands(session.State.User.ID, "")
+	if err != nil {
+		return err
+	}
+
+	for _, i := range commands {
+		if i.Name == command.Data.Name {
+			err = session.ApplicationCommandDelete(session.State.User.ID, "", i.ID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 

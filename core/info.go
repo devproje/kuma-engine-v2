@@ -5,16 +5,18 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/command"
 	"github.com/devproje/kuma-engine/emoji"
+	"github.com/devproje/kuma-engine/log"
 	"github.com/devproje/kuma-engine/utils"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
 
-var KumaInfo = command.Command{
+var kumaInfo = command.Command{
 	Data: &discordgo.ApplicationCommand{
 		Name:        "kumainfo",
 		Description: "KumaEngine system information",
@@ -76,4 +78,30 @@ var KumaInfo = command.Command{
 			},
 		})
 	},
+}
+
+func (k *KumaEngine) DisableKumaInfo() {
+	if !engineStarted {
+		go func() {
+			count := 0
+			for !engineStarted {
+				time.Sleep(time.Second * 1)
+				count++
+			}
+
+			if engineStarted {
+				err := command.DropDataManual(k.Session, kumaInfo)
+				if err != nil {
+					log.Logger.Errorln(err)
+				}
+
+				log.Logger.Infof("KumaInfo disabled: %ds", count)
+			}
+		}()
+
+		command.DropCommand(kumaInfo)
+		return
+	}
+
+	log.Logger.Errorln("You cannot use this method, Please try to engine enabled before")
 }

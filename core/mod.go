@@ -9,11 +9,13 @@ import (
 	"github.com/devproje/kuma-engine/log"
 )
 
-const KUMA_ENGINE_VERSION = "v0.3.0"
+const KUMA_ENGINE_VERSION = "v0.4.0"
 
 var (
-	act   []*discordgo.Activity
-	delay int = 10
+	act           []*discordgo.Activity
+	delay         int  = 10
+	engineStarted bool = false
+	infoEnabled   bool = true
 )
 
 type KumaEngine struct {
@@ -32,19 +34,20 @@ func (k KumaEngine) Create() (*KumaEngine, error) {
 	}
 
 	k.Session.AddHandler(command.CommandHandler)
-	command.RegisterCommand(KumaInfo)
+	if infoEnabled {
+		command.AddCommand(kumaInfo)
+	}
 
 	return &k, nil
 }
 
-func (k KumaEngine) CreateIntents() (*KumaEngine, error) {
+func (k KumaEngine) CreateIntents(intent discordgo.Intent) (*KumaEngine, error) {
 	engine, err := k.Create()
 	if err != nil {
 		return nil, err
 	}
 
-	k.Session.Identify.Intents = discordgo.IntentsAll
-
+	k.Session.Identify.Intents = intent
 	return engine, nil
 }
 
@@ -71,9 +74,13 @@ func (k *KumaEngine) Start() error {
 	}(delay)
 
 	if !command.IsCommandNull() {
-		command.RegisterData(k.Session)
+		err := command.AddData(k.Session)
+		if err != nil {
+			log.Logger.Errorln(err)
+		}
 	}
 
+	engineStarted = true
 	return nil
 }
 
