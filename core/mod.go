@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,7 +14,7 @@ import (
 
 var (
 	act   []*discordgo.Activity
-	delay int
+	delay int = 10
 )
 
 type KumaEngine struct {
@@ -63,6 +64,14 @@ func (k *KumaEngine) SetActivities(a ...*discordgo.Activity) {
 	act = append(act, a...)
 }
 
+func (k *KumaEngine) GetActivityDelay() int {
+	return delay
+}
+
+func (k *KumaEngine) SetActivityDelay(second int) {
+	delay = second
+}
+
 func (k *KumaEngine) Version() string {
 	return KUMA_ENGINE_VERSION
 }
@@ -72,6 +81,8 @@ func (k *KumaEngine) Build() error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(delay)
 
 	go func(delay int) {
 		for {
