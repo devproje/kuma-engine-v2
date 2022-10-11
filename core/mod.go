@@ -2,15 +2,14 @@ package core
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/command"
 	"github.com/devproje/kuma-engine/log"
 )
+
+const KUMA_ENGINE_VERSION = "v0.3.0"
 
 var (
 	act   []*discordgo.Activity
@@ -23,10 +22,11 @@ type KumaEngine struct {
 	Session *discordgo.Session
 }
 
+// Create Engine
 func (k KumaEngine) Create() (*KumaEngine, error) {
 	log.Logger.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	var err error
-	k.Session, err = discordgo.New("Bot " + k.Token)
+	k.Session, err = discordgo.New(fmt.Sprintf("Bot %s", k.Token))
 	if err != nil {
 		return nil, err
 	}
@@ -48,41 +48,12 @@ func (k KumaEngine) CreateIntents() (*KumaEngine, error) {
 	return engine, nil
 }
 
-func (k *KumaEngine) RegisterEvent(event interface{}) func() {
-	return k.Session.AddHandler(event)
-}
-
-func (k *KumaEngine) RegisterEventOnce(event interface{}) func() {
-	return k.Session.AddHandlerOnce(event)
-}
-
-func (k *KumaEngine) SetActivity(a *discordgo.Activity) {
-	act = append(act, a)
-}
-
-func (k *KumaEngine) SetActivities(a ...*discordgo.Activity) {
-	act = append(act, a...)
-}
-
-func (k *KumaEngine) GetActivityDelay() int {
-	return delay
-}
-
-func (k *KumaEngine) SetActivityDelay(second int) {
-	delay = second
-}
-
-func (k *KumaEngine) Version() string {
-	return KUMA_ENGINE_VERSION
-}
-
-func (k *KumaEngine) Build() error {
+// Engine Options
+func (k *KumaEngine) Start() error {
 	err := k.Session.Open()
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(delay)
 
 	go func(delay int) {
 		for {
@@ -106,7 +77,7 @@ func (k *KumaEngine) Build() error {
 	return nil
 }
 
-func (k *KumaEngine) Close() error {
+func (k *KumaEngine) Stop() error {
 	err := k.Session.Close()
 	if err != nil {
 		return err
@@ -115,8 +86,7 @@ func (k *KumaEngine) Close() error {
 	return nil
 }
 
-func (k *KumaEngine) CreateInturruptSignal() {
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, syscall.SIGTERM)
-	<-sc
+// KumaEngine Version
+func (k *KumaEngine) Version() string {
+	return KUMA_ENGINE_VERSION
 }
