@@ -35,16 +35,6 @@ func QueryCommandList() []*discordgo.ApplicationCommandOptionChoice {
 	return list
 }
 
-// Deprecated: Use AddCommand(cmd Command) instead
-func RegisterCommand(cmd Command) {
-	AddCommand(cmd)
-}
-
-// Deprecated: Use AddCommands(cmds ...Command) instead
-func RegisterCommands(cmds ...Command) {
-	AddCommands(cmds...)
-}
-
 func AddCommand(cmd Command) {
 	Commands = append(Commands, cmd)
 }
@@ -63,26 +53,6 @@ func DropCommand(cmd Command) {
 
 func IsCommandNull() bool {
 	return len(Commands) == 0
-}
-
-// Deprecated: Use AddData(session *discordgo.Session) instead
-func RegisterData(session *discordgo.Session) error {
-	err := AddData(session)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Deprecated: Use DropData(session *discordgo.Session) instead
-func UnregisterData(session *discordgo.Session) error {
-	err := DropData(session)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func AddData(session *discordgo.Session) error {
@@ -127,6 +97,36 @@ func DropDataManual(session *discordgo.Session, command Command) error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Deprecated: Use AddCommand(cmd Command) instead
+func RegisterCommand(cmd Command) {
+	AddCommand(cmd)
+}
+
+// Deprecated: Use AddCommands(cmds ...Command) instead
+func RegisterCommands(cmds ...Command) {
+	AddCommands(cmds...)
+}
+
+// Deprecated: Use AddData(session *discordgo.Session) instead
+func RegisterData(session *discordgo.Session) error {
+	err := AddData(session)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Deprecated: Use DropData(session *discordgo.Session) instead
+func UnregisterData(session *discordgo.Session) error {
+	err := DropData(session)
+	if err != nil {
+		return err
 	}
 
 	return nil
