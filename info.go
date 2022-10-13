@@ -85,7 +85,8 @@ var kumaInfo = command.Command{
 	},
 }
 
-func (k *KumaEngine) SetEphemeralKumaInfo(e bool) {
+// SetEphemeralKumaInfo Setting KumaInfo embed ephemeral status
+func (k *Engine) SetEphemeralKumaInfo(e bool) {
 	if !engineStarted {
 		infoEphemeral = e
 		return
@@ -94,7 +95,8 @@ func (k *KumaEngine) SetEphemeralKumaInfo(e bool) {
 	log.Logger.Errorln("You cannot use this method, Please try to engine enabled before")
 }
 
-func (k *KumaEngine) DisableKumaInfo() {
+// DisableKumaInfo Disable kumainfo command
+func (k *Engine) DisableKumaInfo() {
 	if !engineStarted {
 		go func() {
 			count := 0
