@@ -70,14 +70,28 @@ var kumaInfo = command.Command{
 			},
 		}.Build()
 
+		data := &discordgo.InteractionResponseData{
+			Embeds: []*discordgo.MessageEmbed{embed},
+		}
+
+		if infoEphemeral {
+			data.Flags = 1 << 6
+		}
+
 		_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Embeds: []*discordgo.MessageEmbed{embed},
-				Flags:  1 << 6,
-			},
+			Data: data,
 		})
 	},
+}
+
+func (k *KumaEngine) SetEphemeralKumaInfo(e bool) {
+	if !engineStarted {
+		infoEphemeral = e
+		return
+	}
+
+	log.Logger.Errorln("You cannot use this method, Please try to engine enabled before")
 }
 
 func (k *KumaEngine) DisableKumaInfo() {

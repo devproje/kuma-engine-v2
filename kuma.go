@@ -20,6 +20,7 @@ var (
 	delay         int  = 10
 	engineStarted bool = false
 	infoEnabled   bool = true
+	infoEphemeral bool = false
 )
 
 type KumaEngine struct {
