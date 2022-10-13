@@ -1,4 +1,4 @@
-package core
+package kuma
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/command"
-	"github.com/devproje/kuma-engine/emoji"
 	"github.com/devproje/kuma-engine/log"
 	"github.com/devproje/kuma-engine/utils"
+	"github.com/devproje/kuma-engine/utils/emoji"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
