@@ -11,6 +11,7 @@ import (
 	"github.com/devproje/kuma-engine/command"
 	"github.com/devproje/kuma-engine/log"
 	"github.com/devproje/kuma-engine/utils/mode"
+	"github.com/sirupsen/logrus"
 )
 
 const KUMA_ENGINE_VERSION = "v1.0.0"
@@ -31,6 +32,7 @@ type KumaEngine struct {
 
 // Create Engine
 func (k KumaEngine) Create() (*KumaEngine, error) {
+	log.Logger.SetLevel(logrus.InfoLevel)
 	log.Logger.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	var err error
 	k.Session, err = discordgo.New(fmt.Sprintf("Bot %s", k.Token))
