@@ -111,7 +111,7 @@ func (k *Engine) DisableKumaInfo() {
 			}
 
 			if engineStarted {
-				err := command.DropDataManual(k.Session, kumaInfo)
+				err := command.DropDataManual(k.session, kumaInfo)
 				if err != nil {
 					log.Logger.Errorln(err)
 				}
