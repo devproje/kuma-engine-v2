@@ -10,7 +10,7 @@ var Commands []Command
 type Command struct {
 	Data    *discordgo.ApplicationCommand
 	Usage   string
-	Execute func(session *discordgo.Session, event *discordgo.InteractionCreate)
+	Execute func(session *discordgo.Session, event *discordgo.InteractionCreate) error
 }
 
 func GetCommandData(name string) *discordgo.ApplicationCommand {

@@ -2,6 +2,7 @@
 token.txt
 
 .idea/
+.fleet/
 
 # Test Directory
 test/
