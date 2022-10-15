@@ -7,8 +7,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Logger main logging system
 var Logger = &logrus.Logger{
-	Out: os.Stderr,
+	Out: os.Stdout,
 	Formatter: &logrus.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: time.RFC3339,

@@ -10,7 +10,7 @@ import (
 	"github.com/devproje/kuma-engine/utils/mode"
 )
 
-func CommandHandler(session *discordgo.Session, event *discordgo.InteractionCreate) {
+func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
 	if event.Interaction.Type == discordgo.InteractionApplicationCommand {
 		for _, i := range Commands {
 			if event.ApplicationCommandData().Name == i.Data.Name {

@@ -11,10 +11,10 @@ Personal discordgo extend library
 
 ### 1. Installation
 ```shell
-go get github.com/devproje/kuma-engine
+go get -u github.com/devproje/kuma-engine
 ```
 
-### 2. Example
+### 2. Example code
 
 ```go
 package main
@@ -24,15 +24,15 @@ import (
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/devproje/kuma-engine"
 	"github.com/devproje/kuma-engine/command"
-	"github.com/devproje/kuma-engine/core"
 	"github.com/devproje/kuma-engine/log"
 	"github.com/devproje/kuma-engine/utils"
 )
 
 var (
 	token = flag.String("token", "", "Type Discord Token")
-	e     *core.KumaEngine
+	e     *kuma.Engine
 )
 
 func ready(session *discordgo.Session, ready *discordgo.Ready) {
@@ -41,10 +41,12 @@ func ready(session *discordgo.Session, ready *discordgo.Ready) {
 
 func main() {
 	flag.Parse()
-	engine, err := core.KumaEngine{
-		Token: *token,
+	var err error
+	engine := &kuma.Engine{
+		Token: token,
 		Color: 0xFF0000,
-	}.Create()
+	}
+	engine, err = engine.Create()
 	if err != nil {
 		log.Logger.Fatalln(err)
 	}
@@ -58,7 +60,7 @@ func main() {
 
 	e = engine
 	log.Logger.Infoln("Bot is now running. Press CTRL-C to exit.")
-	engine.CreateInturruptSignal()
+	engine.CreateInterruptSignal()
 
 	err = engine.Stop()
 	if err != nil {

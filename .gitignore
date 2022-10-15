@@ -1,6 +1,9 @@
+# Files
 .DS_Store
 token.txt
+log.txt
 
+# IDE configuration directory
 .idea/
 .fleet/
 

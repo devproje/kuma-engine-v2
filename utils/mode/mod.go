@@ -14,7 +14,7 @@ const (
 	DebugMode   EngineMode = "debug"
 )
 
-var mode EngineMode = DebugMode
+var mode = DebugMode
 
 func init() {
 	m := os.Getenv("ENGINE_MODE")

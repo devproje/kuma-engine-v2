@@ -22,7 +22,7 @@ var kumaInfo = command.Command{
 		Description: "KumaEngine system information",
 	},
 	Usage: "/kumainfo",
-	Execute: func(session *discordgo.Session, event *discordgo.InteractionCreate) {
+	Execute: func(session *discordgo.Session, event *discordgo.InteractionCreate) error {
 		embed := utils.Embed{
 			Title:       fmt.Sprintf("%s **KumaInfo**", emoji.Dart),
 			Description: "KumaEngine system information",
@@ -78,10 +78,15 @@ var kumaInfo = command.Command{
 			data.Flags = 1 << 6
 		}
 
-		_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
+		err := session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: data,
 		})
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 
