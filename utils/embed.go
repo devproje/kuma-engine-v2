@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/devproje/kuma-engine/utils/emoji"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -42,7 +43,7 @@ func (e Embed) Build() *discordgo.MessageEmbed {
 	}
 }
 
-func ErrorEmbed(executor *discordgo.User, emoji string, message string) *discordgo.MessageEmbed {
+func ErrorEmbed(executor *discordgo.User, emoji emoji.Emoji, message string) *discordgo.MessageEmbed {
 	return Embed{
 		Title:       fmt.Sprintf("%s **Error!**", emoji),
 		Description: message,

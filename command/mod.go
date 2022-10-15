@@ -10,9 +10,10 @@ var Commands []Command
 type Command struct {
 	Data    *discordgo.ApplicationCommand
 	Usage   string
-	Execute func(session *discordgo.Session, event *discordgo.InteractionCreate)
+	Execute func(session *discordgo.Session, event *discordgo.InteractionCreate) error
 }
 
+// GetCommandData getting target command data
 func GetCommandData(name string) *discordgo.ApplicationCommand {
 	for _, i := range Commands {
 		if i.Data.Name == name {
@@ -23,6 +24,7 @@ func GetCommandData(name string) *discordgo.ApplicationCommand {
 	return nil
 }
 
+// QueryCommandList getting all command list
 func QueryCommandList() []*discordgo.ApplicationCommandOptionChoice {
 	var list []*discordgo.ApplicationCommandOptionChoice
 	for _, i := range Commands {
@@ -35,14 +37,17 @@ func QueryCommandList() []*discordgo.ApplicationCommandOptionChoice {
 	return list
 }
 
+// AddCommand add target application command handler
 func AddCommand(cmd Command) {
 	Commands = append(Commands, cmd)
 }
 
+// AddCommands add many application command handlers
 func AddCommands(cmds ...Command) {
 	Commands = append(Commands, cmds...)
 }
 
+// DropCommand delete target application command handler
 func DropCommand(cmd Command) {
 	for i, j := range Commands {
 		if j.Data.Name == cmd.Data.Name {
@@ -51,10 +56,12 @@ func DropCommand(cmd Command) {
 	}
 }
 
-func IsCommandNull() bool {
+// IsCommandNil checking Commands array is nil
+func IsCommandNil() bool {
 	return len(Commands) == 0
 }
 
+// AddData add all application commands data
 func AddData(session *discordgo.Session) error {
 	for i, j := range Commands {
 		log.Logger.Infof("Register command %s data (%d/%d)", j.Data.Name, i+1, len(Commands))
@@ -67,6 +74,7 @@ func AddData(session *discordgo.Session) error {
 	return nil
 }
 
+// DropData delete all application commands data
 func DropData(session *discordgo.Session) error {
 	commands, err := session.ApplicationCommands(session.State.User.ID, "")
 	if err != nil {
@@ -84,6 +92,7 @@ func DropData(session *discordgo.Session) error {
 	return nil
 }
 
+// DropDataManual delete target application command data
 func DropDataManual(session *discordgo.Session, command Command) error {
 	commands, err := session.ApplicationCommands(session.State.User.ID, "")
 	if err != nil {
@@ -97,36 +106,6 @@ func DropDataManual(session *discordgo.Session, command Command) error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Deprecated: Use AddCommand(cmd Command) instead
-func RegisterCommand(cmd Command) {
-	AddCommand(cmd)
-}
-
-// Deprecated: Use AddCommands(cmds ...Command) instead
-func RegisterCommands(cmds ...Command) {
-	AddCommands(cmds...)
-}
-
-// Deprecated: Use AddData(session *discordgo.Session) instead
-func RegisterData(session *discordgo.Session) error {
-	err := AddData(session)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Deprecated: Use DropData(session *discordgo.Session) instead
-func UnregisterData(session *discordgo.Session) error {
-	err := DropData(session)
-	if err != nil {
-		return err
 	}
 
 	return nil

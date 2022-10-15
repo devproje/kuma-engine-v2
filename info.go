@@ -1,4 +1,4 @@
-package core
+package kuma
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/command"
-	"github.com/devproje/kuma-engine/emoji"
 	"github.com/devproje/kuma-engine/log"
 	"github.com/devproje/kuma-engine/utils"
+	"github.com/devproje/kuma-engine/utils/emoji"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
@@ -22,7 +22,7 @@ var kumaInfo = command.Command{
 		Description: "KumaEngine system information",
 	},
 	Usage: "/kumainfo",
-	Execute: func(session *discordgo.Session, event *discordgo.InteractionCreate) {
+	Execute: func(session *discordgo.Session, event *discordgo.InteractionCreate) error {
 		embed := utils.Embed{
 			Title:       fmt.Sprintf("%s **KumaInfo**", emoji.Dart),
 			Description: "KumaEngine system information",
@@ -70,17 +70,38 @@ var kumaInfo = command.Command{
 			},
 		}.Build()
 
-		_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
+		data := &discordgo.InteractionResponseData{
+			Embeds: []*discordgo.MessageEmbed{embed},
+		}
+
+		if infoEphemeral {
+			data.Flags = 1 << 6
+		}
+
+		err := session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Embeds: []*discordgo.MessageEmbed{embed},
-				Flags:  1 << 6,
-			},
+			Data: data,
 		})
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 
-func (k *KumaEngine) DisableKumaInfo() {
+// SetEphemeralKumaInfo Setting KumaInfo embed ephemeral status
+func (k *Engine) SetEphemeralKumaInfo(e bool) {
+	if !engineStarted {
+		infoEphemeral = e
+		return
+	}
+
+	log.Logger.Errorln("You cannot use this method, Please try to engine enabled before")
+}
+
+// DisableKumaInfo Disable kumainfo command
+func (k *Engine) DisableKumaInfo() {
 	if !engineStarted {
 		go func() {
 			count := 0

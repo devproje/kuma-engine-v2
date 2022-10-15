@@ -18,5 +18,6 @@ const (
 	PotableWater         Emoji = ":potable_water:"
 	Satellite            Emoji = ":satellite:"
 	Thermometer          Emoji = ":thermometer:"
+	Warning 			 Emoji = ":warning:"
 	WhiteCheckMark       Emoji = ":white_check_mark:"
 )

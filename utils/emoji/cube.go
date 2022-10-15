@@ -1,7 +1,7 @@
 package emoji
 
 /**
- *  If you wanna use this emoji, Bot must join 'Cube Connect' discord server.
+ *  If you want to use this emoji, Bot must join 'Cube Connect' discord server.
  *  @ServerURL https://discord.gg/vgvYdUdnss
  */
 const (
