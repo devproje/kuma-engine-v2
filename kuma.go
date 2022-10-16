@@ -13,7 +13,7 @@ import (
 	"github.com/devproje/kuma-engine/utils/mode"
 )
 
-const KUMA_ENGINE_VERSION = "v1.0.0"
+const KUMA_ENGINE_VERSION = "v1.1.0"
 
 var (
 	act           []*discordgo.Activity
