@@ -2,12 +2,12 @@ package command
 
 import (
 	"fmt"
-	"github.com/devproje/kuma-engine/utils"
-	"github.com/devproje/kuma-engine/utils/emoji"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/kuma-engine/log"
+	"github.com/devproje/kuma-engine/utils"
+	"github.com/devproje/kuma-engine/utils/emoji"
 	"github.com/devproje/kuma-engine/utils/mode"
+	"github.com/devproje/plog"
 )
 
 func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
@@ -23,7 +23,7 @@ func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
 						}
 					}
 
-					log.Logger.Infof("%s used command: /%s %s\n", event.Member.User.String(), cmd.Name, str)
+					plog.Debugf("%s used command: /%s %s\n", event.Member.User.String(), cmd.Name, str)
 				}
 
 				err := i.Execute(session, event)
@@ -37,7 +37,7 @@ func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
 					_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
 						Type: 5,
 						Data: &discordgo.InteractionResponseData{
-							Embeds: []*discordgo.MessageEmbed{},
+							Embeds: []*discordgo.MessageEmbed{embed},
 						},
 					})
 					return

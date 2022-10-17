@@ -9,11 +9,11 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/command"
-	"github.com/devproje/kuma-engine/log"
 	"github.com/devproje/kuma-engine/utils/mode"
+	"github.com/devproje/plog"
 )
 
-const KUMA_ENGINE_VERSION = "v1.1.1"
+const KUMA_ENGINE_VERSION = "v1.2.0"
 
 var (
 	act           []*discordgo.Activity
@@ -31,7 +31,7 @@ type Engine struct {
 
 // Create default engine
 func (k *Engine) Create() (*Engine, error) {
-	log.Logger.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
+	plog.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	var err error
 	k.session, err = discordgo.New(fmt.Sprintf("Bot %s", k.Token))
 	if err != nil {
@@ -39,7 +39,7 @@ func (k *Engine) Create() (*Engine, error) {
 	}
 
 	if mode.GetMode() == mode.DebugMode {
-		log.Logger.Warnln(`Running in "debug" mode. Switch to "release" mode in production.
+		plog.Warnln(`Running in "debug" mode. Switch to "release" mode in production.
  - using env:  export ENGINE_MODE=release
  - using code: mode.SetMode(mode.ReleaseMode)`)
 	}
@@ -86,7 +86,7 @@ func (k *Engine) Start() error {
 	if !command.IsCommandNil() {
 		err = command.AddData(k.session)
 		if err != nil {
-			log.Logger.Errorln(err)
+			plog.Errorln(err)
 		}
 	}
 
