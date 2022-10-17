@@ -34,7 +34,7 @@ func setLogger() {
 func AddLoggingFile(name string) {
 	f, err := os.OpenFile(fmt.Sprintf("%s.txt", name), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0775)
 	if err != nil {
-		Logger.Fatalf("Failed to create 'log.txt' file\n%v", err)
+		Logger.Fatalf("Failed to create '%s.txt' file\n%v", name, err)
 		return
 	}
 
