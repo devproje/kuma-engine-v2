@@ -2,9 +2,9 @@ package utils
 
 import (
 	"fmt"
-	"github.com/devproje/kuma-engine/utils/emoji"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/devproje/kuma-engine/utils/emoji"
 )
 
 const ERROR_COLOR = 0xDD0000

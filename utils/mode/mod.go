@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/devproje/kuma-engine/log"
+	"github.com/devproje/plog"
+	"github.com/devproje/plog/level"
 )
 
 type EngineMode string
@@ -19,6 +20,10 @@ var mode = DebugMode
 func init() {
 	m := os.Getenv("ENGINE_MODE")
 	modeEnv(m)
+
+	if mode == DebugMode {
+		plog.SetLevel(level.Debug)
+	}
 }
 
 func modeEnv(t string) {
@@ -32,7 +37,7 @@ func modeEnv(t string) {
 	case DebugMode:
 		break
 	default:
-		log.Logger.Panicf(fmt.Sprintf("unknown mode: %s (avaliable mode: release, debug)", t))
+		plog.Panicf(fmt.Sprintf("unknown mode: %s (avaliable mode: release, debug)", t))
 	}
 
 	SetMode(m)

@@ -26,17 +26,17 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine"
 	"github.com/devproje/kuma-engine/command"
-	"github.com/devproje/kuma-engine/log"
 	"github.com/devproje/kuma-engine/utils"
+	"github.com/devproje/plog"
 )
 
 var (
-	token = flag.String("token", "", "Type Discord Token")
+	token = *flag.String("token", "", "Type Discord Token")
 	e     *kuma.Engine
 )
 
 func ready(session *discordgo.Session, ready *discordgo.Ready) {
-	log.Logger.Infof("Logged in as %s", ready.User.String())
+	plog.Infof("Logged in as %s", ready.User.String())
 }
 
 func main() {
@@ -48,23 +48,23 @@ func main() {
 	}
 	engine, err = engine.Create()
 	if err != nil {
-		log.Logger.Fatalln(err)
+		plog.Fatalln(err)
 	}
 	
 	engine.AddEventOnce(ready)
 
 	err = engine.Start()
 	if err != nil {
-		log.Logger.Fatalln(err)
+		plog.Fatalln(err)
 	}
 
 	e = engine
-	log.Logger.Infoln("Bot is now running. Press CTRL-C to exit.")
+	plog.Infoln("Bot is now running. Press CTRL-C to exit.")
 	engine.CreateInterruptSignal()
 
 	err = engine.Stop()
 	if err != nil {
-		log.Logger.Fatalln(err)
+		plog.Fatalln(err)
 	}
 }
 ```
