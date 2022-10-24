@@ -50,8 +50,13 @@ func (g *GuildCommand) AddGuildData(session *discordgo.Session) error {
 	}
 
 	for i, j := range g.Commands {
-		plog.Infof("Register '%s' guild command %s data (%d/%d)", g.GuildId, j.Data.Name, i+1, len(Commands))
-		_, err := session.ApplicationCommandCreate(session.State.User.ID, g.GuildId, j.Data)
+		guild, err := session.State.Guild(g.GuildId)
+		if err != nil {
+			return err
+		}
+
+		plog.Infof("Register '%s' guild command %s data (%d/%d)", guild.Name, j.Data.Name, i+1, len(Commands))
+		_, err = session.ApplicationCommandCreate(session.State.User.ID, g.GuildId, j.Data)
 		if err != nil {
 			return err
 		}
@@ -68,7 +73,12 @@ func (g *GuildCommand) DropGuildData(session *discordgo.Session) error {
 	}
 
 	for _, i := range commands {
-		plog.Infof("Remove '%s' guild command %s data", g.GuildId, i.Name)
+		guild, err := session.State.Guild(g.GuildId)
+		if err != nil {
+			return err
+		}
+
+		plog.Infof("Remove '%s' guild command %s data", guild.Name, i.Name)
 		err = session.ApplicationCommandDelete(session.State.User.ID, g.GuildId, i.ID)
 		if err != nil {
 			return err
