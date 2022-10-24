@@ -10,25 +10,29 @@ import (
 	"github.com/devproje/plog"
 )
 
+func debug(event *discordgo.InteractionCreate) {
+	if mode.GetMode() != mode.DebugMode {
+		return
+	}
+	cmd := event.ApplicationCommandData()
+	var str = ""
+	if len(cmd.Options) > 0 {
+		for _, j := range cmd.Options {
+			str += fmt.Sprintf("{%s: %v} ", j.Name, j.Value)
+		}
+	}
+
+	plog.Debugf("%s used command: /%s %s\n", event.Member.User.String(), cmd.Name, str)
+}
+
 func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
 	if event.Interaction.Type == discordgo.InteractionApplicationCommand {
 		for _, i := range Commands {
 			if event.ApplicationCommandData().Name == i.Data.Name {
-				if mode.GetMode() == mode.DebugMode {
-					cmd := event.ApplicationCommandData()
-					var str = ""
-					if len(cmd.Options) > 0 {
-						for _, j := range cmd.Options {
-							str += fmt.Sprintf("{%s: %v} ", j.Name, j.Value)
-						}
-					}
-
-					plog.Debugf("%s used command: /%s %s\n", event.Member.User.String(), cmd.Name, str)
-				}
-
+				debug(event)
 				err := i.Execute(session, event)
 				if err != nil {
-					str := "An error occurred while executing the code"
+					str := "An error occurred while executing command"
 					embed := utils.ErrorEmbed(event.Member.User, emoji.Warning, str)
 					if mode.GetMode() == mode.DebugMode {
 						embed.Description = fmt.Sprintf("%s\n**%s**", str, err.Error())
