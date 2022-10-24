@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/devproje/kuma-engine/utils"
+	"github.com/devproje/kuma-engine/utils/emoji"
 	"github.com/devproje/plog"
 )
 
@@ -22,9 +24,17 @@ func (g *GuildCommand) BuildHandler(session *discordgo.Session) {
 		if e.Interaction.Type == discordgo.InteractionApplicationCommand {
 			for _, j := range g.Commands {
 				if j.Data.Name == e.ApplicationCommandData().Name {
+					debug(e)
 					err := j.Execute(s, e)
 					if err != nil {
-						s.InteractionRespond(e.Interaction, &discordgo.InteractionResponse{})
+						s.InteractionRespond(e.Interaction, &discordgo.InteractionResponse{
+							Type: discordgo.InteractionResponseChannelMessageWithSource,
+							Data: &discordgo.InteractionResponseData{
+								Embeds: []*discordgo.MessageEmbed{
+									utils.ErrorEmbed(e.Member.User, emoji.NoEntry, "An error occurred while executing the code"),
+								},
+							},
+						})
 						return
 					}
 				}
