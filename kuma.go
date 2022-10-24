@@ -26,14 +26,14 @@ var (
 type Engine struct {
 	Token   string
 	Color   int
-	session *discordgo.Session
+	Session *discordgo.Session
 }
 
 // Create default engine
 func (k *Engine) Create() (*Engine, error) {
 	plog.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	var err error
-	k.session, err = discordgo.New(fmt.Sprintf("Bot %s", k.Token))
+	k.Session, err = discordgo.New(fmt.Sprintf("Bot %s", k.Token))
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (k *Engine) Create() (*Engine, error) {
  - using code: mode.SetMode(mode.ReleaseMode)`)
 	}
 
-	k.session.AddHandler(command.Handler)
+	k.Session.AddHandler(command.Handler)
 	if infoEnabled {
 		command.AddCommand(kumaInfo)
 	}
@@ -59,13 +59,13 @@ func (k *Engine) CreateIntents(intent discordgo.Intent) (*Engine, error) {
 		return nil, err
 	}
 
-	k.session.Identify.Intents = intent
+	k.Session.Identify.Intents = intent
 	return engine, nil
 }
 
 // Start starting engine
 func (k *Engine) Start() error {
-	err := k.session.Open()
+	err := k.Session.Open()
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (k *Engine) Start() error {
 	go func(delay int) {
 		for len(act) != 0 {
 			for i := 0; i < len(act); i++ {
-				_ = k.session.UpdateStatusComplex(discordgo.UpdateStatusData{
+				_ = k.Session.UpdateStatusComplex(discordgo.UpdateStatusData{
 					Status:     string(discordgo.StatusOnline),
 					Activities: []*discordgo.Activity{act[i]},
 				})
@@ -84,7 +84,7 @@ func (k *Engine) Start() error {
 	}(delay)
 
 	if !command.IsCommandNil() {
-		err = command.AddData(k.session)
+		err = command.AddData(k.Session)
 		if err != nil {
 			plog.Errorln(err)
 		}
@@ -96,7 +96,7 @@ func (k *Engine) Start() error {
 
 // Stop stopped engine
 func (k *Engine) Stop() error {
-	err := k.session.Close()
+	err := k.Session.Close()
 	if err != nil {
 		return err
 	}
@@ -106,12 +106,12 @@ func (k *Engine) Stop() error {
 
 // AddEvent Add discord event handler
 func (k *Engine) AddEvent(event interface{}) func() {
-	return k.session.AddHandler(event)
+	return k.Session.AddHandler(event)
 }
 
 // AddEventOnce Add discord event handler once
 func (k *Engine) AddEventOnce(event interface{}) func() {
-	return k.session.AddHandlerOnce(event)
+	return k.Session.AddHandlerOnce(event)
 }
 
 // AddAct add one activity
