@@ -55,7 +55,7 @@ func (g *GuildCommand) AddGuildData(session *discordgo.Session) error {
 			return err
 		}
 
-		plog.Infof("Register '%s' guild command %s data (%d/%d)", guild.Name, j.Data.Name, i+1, len(Commands))
+		plog.Infof("Register '%s' guild command %s data (%d/%d)", guild.Name, j.Data.Name, i+1, len(g.Commands))
 		_, err = session.ApplicationCommandCreate(session.State.User.ID, g.GuildId, j.Data)
 		if err != nil {
 			return err

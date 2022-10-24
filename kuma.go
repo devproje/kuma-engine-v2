@@ -13,7 +13,7 @@ import (
 	"github.com/devproje/plog"
 )
 
-const KUMA_ENGINE_VERSION = "v1.3.2"
+const KUMA_ENGINE_VERSION = "v1.3.3"
 
 var (
 	act           []*discordgo.Activity
