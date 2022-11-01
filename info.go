@@ -11,7 +11,7 @@ import (
 	"github.com/devproje/kuma-engine/command"
 	"github.com/devproje/kuma-engine/utils"
 	"github.com/devproje/kuma-engine/utils/emoji"
-	"github.com/devproje/plog"
+	"github.com/devproje/plog/log"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
@@ -97,7 +97,7 @@ func (k *Engine) SetEphemeralKumaInfo(e bool) {
 		return
 	}
 
-	plog.Errorln("You cannot use this method, Please try to engine enabled before")
+	log.Errorln("You cannot use this method, Please try to engine enabled before")
 }
 
 // DisableKumaInfo Disable kumainfo command
@@ -113,10 +113,10 @@ func (k *Engine) DisableKumaInfo() {
 			if engineStarted {
 				err := command.DropDataManual(k.Session, kumaInfo)
 				if err != nil {
-					plog.Errorln(err)
+					log.Errorln(err)
 				}
 
-				plog.Infof("KumaInfo disabled: %ds", count)
+				log.Infof("KumaInfo disabled: %ds", count)
 			}
 		}()
 
@@ -124,5 +124,5 @@ func (k *Engine) DisableKumaInfo() {
 		return
 	}
 
-	plog.Errorln("You cannot use this method, Please try to engine enabled before")
+	log.Errorln("You cannot use this method, Please try to engine enabled before")
 }

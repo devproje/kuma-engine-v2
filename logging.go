@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/devproje/plog"
+	"github.com/devproje/plog/log"
 )
 
 var writers []io.Writer
@@ -16,13 +16,13 @@ func init() {
 }
 
 func setLogger() {
-	plog.SetOutput(io.MultiWriter(writers...))
+	log.SetOutput(io.MultiWriter(writers...))
 }
 
 func AddLoggingFile(name string) {
 	f, err := os.OpenFile(fmt.Sprintf("%s.txt", name), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0775)
 	if err != nil {
-		plog.Fatalf("Failed to create '%s.txt' file\n%v", name, err)
+		log.Fatalf("Failed to create '%s.txt' file\n%v", name, err)
 		return
 	}
 

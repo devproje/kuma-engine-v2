@@ -7,7 +7,7 @@ import (
 	"github.com/devproje/kuma-engine/utils"
 	"github.com/devproje/kuma-engine/utils/emoji"
 	"github.com/devproje/kuma-engine/utils/mode"
-	"github.com/devproje/plog"
+	"github.com/devproje/plog/log"
 )
 
 func debug(event *discordgo.InteractionCreate) {
@@ -22,7 +22,7 @@ func debug(event *discordgo.InteractionCreate) {
 		}
 	}
 
-	plog.Debugf("%s used command: /%s %s\n", event.Member.User.String(), cmd.Name, str)
+	log.Debugf("%s used command: /%s %s\n", event.Member.User.String(), cmd.Name, str)
 }
 
 func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {

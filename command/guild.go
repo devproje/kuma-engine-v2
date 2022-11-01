@@ -6,7 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/utils"
 	"github.com/devproje/kuma-engine/utils/emoji"
-	"github.com/devproje/plog"
+	"github.com/devproje/plog/log"
 )
 
 type GuildCommand struct {
@@ -55,7 +55,7 @@ func (g *GuildCommand) AddGuildData(session *discordgo.Session) error {
 			return err
 		}
 
-		plog.Infof("Register '%s' guild command %s data (%d/%d)", guild.Name, j.Data.Name, i+1, len(g.Commands))
+		log.Infof("Register '%s' guild command %s data (%d/%d)", guild.Name, j.Data.Name, i+1, len(g.Commands))
 		_, err = session.ApplicationCommandCreate(session.State.User.ID, g.GuildId, j.Data)
 		if err != nil {
 			return err
@@ -78,7 +78,7 @@ func (g *GuildCommand) DropGuildData(session *discordgo.Session) error {
 			return err
 		}
 
-		plog.Infof("Remove '%s' guild command %s data", guild.Name, i.Name)
+		log.Infof("Remove '%s' guild command %s data", guild.Name, i.Name)
 		err = session.ApplicationCommandDelete(session.State.User.ID, g.GuildId, i.ID)
 		if err != nil {
 			return err

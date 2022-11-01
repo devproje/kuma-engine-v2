@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/devproje/plog"
 	"github.com/devproje/plog/level"
+	"github.com/devproje/plog/log"
 )
 
 type EngineMode string
@@ -22,7 +22,7 @@ func init() {
 	modeEnv(m)
 
 	if mode == DebugMode {
-		plog.SetLevel(level.Debug)
+		log.SetLevel(level.Debug)
 	}
 }
 
@@ -37,7 +37,7 @@ func modeEnv(t string) {
 	case DebugMode:
 		break
 	default:
-		plog.Panicf(fmt.Sprintf("unknown mode: %s (avaliable mode: release, debug)", t))
+		log.Panicf(fmt.Sprintf("unknown mode: %s (avaliable mode: release, debug)", t))
 	}
 
 	SetMode(m)

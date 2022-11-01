@@ -2,7 +2,7 @@ package command
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/plog"
+	"github.com/devproje/plog/log"
 )
 
 var Commands []Command
@@ -64,7 +64,7 @@ func IsCommandNil() bool {
 // AddData add all application commands data
 func AddData(session *discordgo.Session) error {
 	for i, j := range Commands {
-		plog.Infof("Register command %s data (%d/%d)", j.Data.Name, i+1, len(Commands))
+		log.Infof("Register command %s data (%d/%d)", j.Data.Name, i+1, len(Commands))
 		_, err := session.ApplicationCommandCreate(session.State.User.ID, "", j.Data)
 		if err != nil {
 			return err
@@ -82,7 +82,7 @@ func DropData(session *discordgo.Session) error {
 	}
 
 	for _, i := range commands {
-		plog.Infof("Remove command %s data", i.Name)
+		log.Infof("Remove command %s data", i.Name)
 		err = session.ApplicationCommandDelete(session.State.User.ID, "", i.ID)
 		if err != nil {
 			return err
