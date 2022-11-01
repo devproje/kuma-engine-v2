@@ -36,7 +36,7 @@ var (
 )
 
 func ready(session *discordgo.Session, ready *discordgo.Ready) {
-	plog.Infof("Logged in as %s", ready.User.String())
+	log.Infof("Logged in as %s", ready.User.String())
 }
 
 func main() {
