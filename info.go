@@ -74,10 +74,6 @@ var kumaInfo = command.Command{
 			Embeds: []*discordgo.MessageEmbed{embed},
 		}
 
-		if infoEphemeral {
-			data.Flags = 1 << 6
-		}
-
 		err := session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: data,
@@ -90,27 +86,17 @@ var kumaInfo = command.Command{
 	},
 }
 
-// SetEphemeralKumaInfo Setting KumaInfo embed ephemeral status
-func (k *Engine) SetEphemeralKumaInfo(e bool) {
-	if !engineStarted {
-		infoEphemeral = e
-		return
-	}
-
-	log.Errorln("You cannot use this method, Please try to engine enabled before")
-}
-
 // DisableKumaInfo Disable kumainfo command
 func (k *Engine) DisableKumaInfo() {
-	if !engineStarted {
+	if !k.started {
 		go func() {
 			count := 0
-			for !engineStarted {
+			for !k.started {
 				time.Sleep(time.Second * 1)
 				count++
 			}
 
-			if engineStarted {
+			if k.started {
 				err := command.DropDataManual(k.Session, kumaInfo)
 				if err != nil {
 					log.Errorln(err)

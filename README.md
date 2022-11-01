@@ -27,7 +27,7 @@ import (
 	"github.com/devproje/kuma-engine"
 	"github.com/devproje/kuma-engine/command"
 	"github.com/devproje/kuma-engine/utils"
-	"github.com/devproje/plog"
+	"github.com/devproje/plog/log"
 )
 
 var (
@@ -55,16 +55,16 @@ func main() {
 
 	err = engine.Start()
 	if err != nil {
-		plog.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	e = engine
-	plog.Infoln("Bot is now running. Press CTRL-C to exit.")
+	log.Infoln("Bot is now running. Press CTRL-C to exit.")
 	engine.CreateInterruptSignal()
 
 	err = engine.Stop()
 	if err != nil {
-		plog.Fatalln(err)
+		log.Fatalln(err)
 	}
 }
 ```

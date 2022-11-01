@@ -2,6 +2,7 @@ package kuma
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,17 +14,15 @@ import (
 	"github.com/devproje/plog/log"
 )
 
-const KUMA_ENGINE_VERSION = "v1.3.4"
-
-var (
-	act           []*discordgo.Activity
-	delay         = 10
-	engineStarted = false
-	infoEnabled   = true
-	infoEphemeral = false
-)
+const KUMA_ENGINE_VERSION = "v1.4.0"
 
 type Engine struct {
+	act         []*discordgo.Activity
+	writers     []io.Writer
+	delay       int
+	started     bool
+	infoEnabled bool
+
 	Token   string
 	Color   int
 	Session *discordgo.Session
@@ -31,8 +30,14 @@ type Engine struct {
 
 // Create default engine
 func (k *Engine) Create() (*Engine, error) {
-	log.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	var err error
+	k.init()
+
+	k.delay = 10
+	k.started = false
+	k.infoEnabled = true
+
+	log.Infof("KumaEngine %s\n", KUMA_ENGINE_VERSION)
 	k.Session, err = discordgo.New(fmt.Sprintf("Bot %s", k.Token))
 	if err != nil {
 		return nil, err
@@ -45,7 +50,7 @@ func (k *Engine) Create() (*Engine, error) {
 	}
 
 	k.Session.AddHandler(command.Handler)
-	if infoEnabled {
+	if k.infoEnabled {
 		command.AddCommand(kumaInfo)
 	}
 
@@ -71,17 +76,17 @@ func (k *Engine) Start() error {
 	}
 
 	go func(delay int) {
-		for len(act) != 0 {
-			for i := 0; i < len(act); i++ {
+		for len(k.act) != 0 {
+			for i := 0; i < len(k.act); i++ {
 				_ = k.Session.UpdateStatusComplex(discordgo.UpdateStatusData{
 					Status:     string(discordgo.StatusOnline),
-					Activities: []*discordgo.Activity{act[i]},
+					Activities: []*discordgo.Activity{k.act[i]},
 				})
 
 				time.Sleep(time.Second * time.Duration(delay))
 			}
 		}
-	}(delay)
+	}(k.delay)
 
 	if !command.IsCommandNil() {
 		err = command.AddData(k.Session)
@@ -90,7 +95,7 @@ func (k *Engine) Start() error {
 		}
 	}
 
-	engineStarted = true
+	k.started = true
 	return nil
 }
 
@@ -116,38 +121,38 @@ func (k *Engine) AddEventOnce(event interface{}) func() {
 
 // AddAct add one activity
 func (k *Engine) AddAct(a *discordgo.Activity) {
-	act = append(act, a)
+	k.act = append(k.act, a)
 }
 
 // AddActs add many activities
 func (k *Engine) AddActs(a ...*discordgo.Activity) {
-	act = append(act, a...)
+	k.act = append(k.act, a...)
 }
 
 // SetAct set activity
 func (k *Engine) SetAct(a *discordgo.Activity) {
-	act = []*discordgo.Activity{a}
+	k.act = []*discordgo.Activity{a}
 }
 
 // SetActs set activities
 func (k *Engine) SetActs(a ...*discordgo.Activity) {
 	k.InitActs()
-	act = append(act, a...)
+	k.act = append(k.act, a...)
 }
 
 // InitActs Initializing activity array
 func (k *Engine) InitActs() {
-	act = []*discordgo.Activity{}
+	k.act = []*discordgo.Activity{}
 }
 
 // GetActDelay Get activity change time
 func (k *Engine) GetActDelay() int {
-	return delay
+	return k.delay
 }
 
 // SetActDelay Set activity change time
 func (k *Engine) SetActDelay(second int) {
-	delay = second
+	k.delay = second
 }
 
 // Version Checking engine version
