@@ -26,26 +26,29 @@ func debug(event *discordgo.InteractionCreate) {
 }
 
 func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
-	if event.Interaction.Type == discordgo.InteractionApplicationCommand {
-		for _, i := range Commands {
-			if event.ApplicationCommandData().Name == i.Data.Name {
-				debug(event)
-				err := i.Execute(session, event)
-				if err != nil {
-					str := "An error occurred while executing command"
-					embed := utils.ErrorEmbed(event.Member.User, emoji.Warning, str)
-					if mode.GetMode() == mode.DebugMode {
-						embed.Description = fmt.Sprintf("%s\n**%s**", str, err.Error())
-					}
+	if event.Interaction.Type != discordgo.InteractionApplicationCommand {
+		return
+	}
 
-					_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
-						Type: 5,
-						Data: &discordgo.InteractionResponseData{
-							Embeds: []*discordgo.MessageEmbed{embed},
-						},
-					})
-					return
+	for _, i := range Commands {
+		if event.ApplicationCommandData().Name == i.Data.Name {
+			debug(event)
+			err := i.Execute(session, event)
+			if err != nil {
+				str := "An error occurred while executing command"
+				embed := utils.ErrorEmbed(event.Member.User, emoji.Warning, str)
+				if mode.GetMode() == mode.DebugMode {
+					embed.Description = fmt.Sprintf("%s\n**%s**", str, err.Error())
 				}
+
+				_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
+					Type: 5,
+					Data: &discordgo.InteractionResponseData{
+						Embeds: []*discordgo.MessageEmbed{embed},
+					},
+				})
+
+				return
 			}
 		}
 	}

@@ -1,7 +1,11 @@
 TAG=default
+TOKEN=
+
+debug: ./debug/bot.go
+	go run ./debug/bot.go -token=$(TOKEN)
 
 init:
 	go mod tidy
 
 publish:
-	./publish.sh $(TAG)
+	./scripts/publish.sh $(TAG)
