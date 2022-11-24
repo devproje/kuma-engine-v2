@@ -42,7 +42,7 @@ func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
 				}
 
 				_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
-					Type: 5,
+					Type: 4,
 					Data: &discordgo.InteractionResponseData{
 						Embeds: []*discordgo.MessageEmbed{embed},
 					},
