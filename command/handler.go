@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/kuma-engine/utils"
-	"github.com/devproje/kuma-engine/utils/emoji"
 	"github.com/devproje/kuma-engine/utils/mode"
 	"github.com/devproje/plog/log"
 )
@@ -36,18 +34,18 @@ func Handler(session *discordgo.Session, event *discordgo.InteractionCreate) {
 			err := i.Execute(session, event)
 			if err != nil {
 				str := "An error occurred while executing command"
-				embed := utils.ErrorEmbed(event.Member.User, emoji.Warning, str)
 				if mode.GetMode() == mode.DebugMode {
-					embed.Description = fmt.Sprintf("%s\n**%s**", str, err.Error())
+					str = fmt.Sprintf("%s\n%s", str, err.Error())
 				}
 
 				_ = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
 					Type: 4,
 					Data: &discordgo.InteractionResponseData{
-						Embeds: []*discordgo.MessageEmbed{embed},
+						Content: str,
 					},
 				})
 
+				log.Errorln(err)
 				return
 			}
 		}

@@ -4,8 +4,6 @@ import (
 	"errors"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/kuma-engine/utils"
-	"github.com/devproje/kuma-engine/utils/emoji"
 	"github.com/devproje/plog/log"
 )
 
@@ -30,11 +28,10 @@ func (g *GuildCommand) BuildHandler(session *discordgo.Session) {
 						s.InteractionRespond(e.Interaction, &discordgo.InteractionResponse{
 							Type: discordgo.InteractionResponseChannelMessageWithSource,
 							Data: &discordgo.InteractionResponseData{
-								Embeds: []*discordgo.MessageEmbed{
-									utils.ErrorEmbed(e.Member.User, emoji.NoEntry, "An error occurred while executing the code"),
-								},
+								Content: "An error occurred while executing the code",
 							},
 						})
+						log.Errorln(err)
 						return
 					}
 				}
