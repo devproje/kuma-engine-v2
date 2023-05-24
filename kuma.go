@@ -14,7 +14,7 @@ import (
 	"github.com/devproje/plog/log"
 )
 
-const KUMA_ENGINE_VERSION = "v1.5.0"
+const KUMA_ENGINE_VERSION = "v1.5.1"
 
 type Engine struct {
 	act         []*discordgo.Activity
