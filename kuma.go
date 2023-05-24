@@ -14,7 +14,7 @@ import (
 	"github.com/devproje/plog/log"
 )
 
-const KUMA_ENGINE_VERSION = "v1.4.5"
+const KUMA_ENGINE_VERSION = "v1.5.0"
 
 type Engine struct {
 	act         []*discordgo.Activity
@@ -24,7 +24,6 @@ type Engine struct {
 	infoEnabled bool
 
 	Token   string
-	Color   int
 	Session *discordgo.Session
 }
 

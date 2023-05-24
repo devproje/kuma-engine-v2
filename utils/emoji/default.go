@@ -1,23 +1,23 @@
 package emoji
 
-const (
-	AlarmClock           Emoji = ":alarm_clock:"
-	CalendarSpiral       Emoji = ":calendar_spiral:"
-	Dart                 Emoji = ":dart:"
-	Desktop              Emoji = ":desktop:"
-	ElectricPlug         Emoji = ":electric_plug:"
-	EnvelopeWithArrow    Emoji = ":envelope_with_arrow:"
-	FileFolder           Emoji = ":file_folder:"
-	GameDie              Emoji = ":game_die:"
-	HourGlassFlowingSand Emoji = ":hourglass_flowing_sand:"
-	MobilePhone          Emoji = ":mobile_phone:"
-	NoEntry              Emoji = ":no_entry:"
-	NotepadSpiral        Emoji = ":notepad_spiral:"
-	PageFacingUp         Emoji = ":page_facing_up:"
-	PingPong             Emoji = ":ping_pong:"
-	PotableWater         Emoji = ":potable_water:"
-	Satellite            Emoji = ":satellite:"
-	Thermometer          Emoji = ":thermometer:"
-	Warning 			 Emoji = ":warning:"
-	WhiteCheckMark       Emoji = ":white_check_mark:"
+var (
+	AlarmClock           Emoji = Data{Name: ":alarm_clock:"}.EmojiBuilder()
+	CalendarSpiral       Emoji = Data{Name: ":calendar_spiral:"}.EmojiBuilder()
+	Dart                 Emoji = Data{Name: ":dart:"}.EmojiBuilder()
+	Desktop              Emoji = Data{Name: ":desktop:"}.EmojiBuilder()
+	ElectricPlug         Emoji = Data{Name: ":electric_plug:"}.EmojiBuilder()
+	EnvelopeWithArrow    Emoji = Data{Name: ":envelope_with_arrow:"}.EmojiBuilder()
+	FileFolder           Emoji = Data{Name: ":file_folder:"}.EmojiBuilder()
+	GameDie              Emoji = Data{Name: ":game_die:"}.EmojiBuilder()
+	HourGlassFlowingSand Emoji = Data{Name: ":hourglass_flowing_sand:"}.EmojiBuilder()
+	MobilePhone          Emoji = Data{Name: ":mobile_phone:"}.EmojiBuilder()
+	NoEntry              Emoji = Data{Name: ":no_entry:"}.EmojiBuilder()
+	NotepadSpiral        Emoji = Data{Name: ":notepad_spiral:"}.EmojiBuilder()
+	PageFacingUp         Emoji = Data{Name: ":page_facing_up:"}.EmojiBuilder()
+	PingPong             Emoji = Data{Name: ":ping_pong:"}.EmojiBuilder()
+	PotableWater         Emoji = Data{Name: ":potable_water:"}.EmojiBuilder()
+	Satellite            Emoji = Data{Name: ":satellite:"}.EmojiBuilder()
+	Thermometer          Emoji = Data{Name: ":thermometer:"}.EmojiBuilder()
+	Warning              Emoji = Data{Name: ":warning:"}.EmojiBuilder()
+	WhiteCheckMark       Emoji = Data{Name: ":white_check_mark:"}.EmojiBuilder()
 )
