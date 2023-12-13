@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="console-log" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{HH:mm:ss} %-4level]: %m%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="net.projecttl.kuma.engine.KumaEngine" level="INFO"/>
+        <Root level="INFO">
+            <appender-ref ref="console-log" level="INFO" />
+        </Root>
+    </Loggers>
+</Configuration>

@@ -36,7 +36,7 @@ class CommandHandler(
         try {
             command.executor(event)
         } catch (ex: Exception) {
-            event.reply("Error occurred while executing command.").queue()
+            event.reply(lang.load().command.error).queue()
             ex.printStackTrace()
         }
     }
@@ -45,20 +45,17 @@ class CommandHandler(
         coroutineScope {
             launch {
                 for (cmd in commands) {
-                    if (guildId != null) {
-                        val guild = jda.getGuildById(guildId)
-                        if (guild == null) {
-                            throw Exception("")
-                            return@launch
-                        }
+                    if (guildId == null) {
+                        jda.upsertCommand(cmd.data).queue()
+                        logger.info("Registered global command: /${cmd.data.name}")
 
-                        jda.getGuildById(guildId)?.upsertCommand(cmd.data)?.queue()
-                        logger.info("Loaded global command: /${cmd.data.name}")
                         continue
                     }
 
-                    jda.upsertCommand(cmd.data).queue()
-                    logger.info("Loaded global command: /${cmd.data.name}")
+                    val guild = jda.getGuildById(guildId) ?: throw Exception("current guild id is not exist")
+
+                    guild.upsertCommand(cmd.data).queue()
+                    logger.info("Registered ${guild.id} command: /${cmd.data.name}")
                 }
             }
         }

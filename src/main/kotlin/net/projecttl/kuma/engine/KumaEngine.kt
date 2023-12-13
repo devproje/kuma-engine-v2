@@ -8,11 +8,40 @@ import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.projecttl.kuma.engine.command.CommandHandler
+import java.util.logging.Logger
 
 class KumaEngine(token: String, indent: List<GatewayIntent> = listOf()) {
     private val builder = JDABuilder.createDefault(token, indent)
     private val handlers = mutableListOf<ListenerAdapter>()
     private val commands = mutableListOf<CommandHandler>()
+
+    val logger = Logger.getLogger("KumaEngine")
+
+    fun addCommandHandler(vararg command: CommandHandler) {
+        handlers.addAll(command)
+        commands.addAll(command)
+    }
+
+    fun dropCommandHandler(command: CommandHandler) {
+        if (!handlers.contains(command) && !commands.contains(command)) {
+            return
+        }
+
+        handlers.remove(command)
+        commands.remove(command)
+    }
+
+    fun addHandler(vararg handler: ListenerAdapter) {
+        handlers.addAll(handler)
+    }
+
+    fun dropHandler(handler: ListenerAdapter) {
+        if (!handlers.contains(handler)) {
+            return
+        }
+
+        handlers.remove(handler)
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun build() {
@@ -22,7 +51,7 @@ class KumaEngine(token: String, indent: List<GatewayIntent> = listOf()) {
 
                 GlobalScope.launch {
                     commands.forEach {
-                        it.register(jda)
+                        it.register(jda, logger)
                     }
                 }
             }

@@ -21,6 +21,7 @@ dependencies {
     implementation("net.dv8tion:JDA:${jda}")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:${mongodb}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutine}")
 
