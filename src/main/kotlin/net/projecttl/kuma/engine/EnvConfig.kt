@@ -3,7 +3,7 @@ package net.projecttl.kuma.engine
 import io.github.cdimascio.dotenv.Dotenv
 import kotlin.reflect.KProperty
 
-class EnvConfig {
+open class EnvConfig {
     fun <T> useConfig(): EnvDelegate<T> {
         return EnvDelegate()
     }

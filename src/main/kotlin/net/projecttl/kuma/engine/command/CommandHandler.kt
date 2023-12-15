@@ -5,13 +5,11 @@ import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import net.projecttl.kuma.engine.enum.Lang
-import java.util.logging.Logger
+import org.slf4j.Logger
 
 class CommandHandler(
     val name: String = "default",
-    val guildId: String? = null,
-    val lang: Lang = Lang.EN_US
+    val guildId: String? = null
 ) : ListenerAdapter() {
     private val commands = mutableListOf<CommandExecutor>()
 
@@ -36,7 +34,7 @@ class CommandHandler(
         try {
             command.executor(event)
         } catch (ex: Exception) {
-            event.reply(lang.load().command.error).queue()
+            event.reply("Error occurred while executing command.").queue()
             ex.printStackTrace()
         }
     }

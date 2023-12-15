@@ -8,14 +8,14 @@ import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.projecttl.kuma.engine.command.CommandHandler
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 class KumaEngine(token: String, indent: List<GatewayIntent> = listOf()) {
     private val builder = JDABuilder.createDefault(token, indent)
     private val handlers = mutableListOf<ListenerAdapter>()
     private val commands = mutableListOf<CommandHandler>()
 
-    val logger = Logger.getLogger("KumaEngine")
+    private val logger = LoggerFactory.getLogger("KumaEngine")
 
     fun addCommandHandler(vararg command: CommandHandler) {
         handlers.addAll(command)
