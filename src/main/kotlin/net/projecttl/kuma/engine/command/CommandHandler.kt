@@ -44,7 +44,7 @@ class CommandHandler(
             launch {
                 for (cmd in commands) {
                     if (guildId == null) {
-                        jda.upsertCommand(cmd.data).queue()
+                        jda.upsertCommand(cmd.data.build()).queue()
                         logger.info("Registered global command: /${cmd.data.name}")
 
                         continue
@@ -52,7 +52,7 @@ class CommandHandler(
 
                     val guild = jda.getGuildById(guildId) ?: throw Exception("current guild id is not exist")
 
-                    guild.upsertCommand(cmd.data).queue()
+                    guild.upsertCommand(cmd.data.build()).queue()
                     logger.info("Registered ${guild.id} command: /${cmd.data.name}")
                 }
             }

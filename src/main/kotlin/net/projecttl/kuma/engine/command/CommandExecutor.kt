@@ -1,9 +1,9 @@
 package net.projecttl.kuma.engine.command
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.projecttl.kuma.engine.`object`.CommandDataBuilder
 
 interface CommandExecutor {
-    val data: CommandData
+    val data: CommandDataBuilder
     fun executor(event: SlashCommandInteractionEvent)
 }
