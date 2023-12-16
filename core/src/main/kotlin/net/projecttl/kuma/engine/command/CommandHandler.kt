@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.Logger
 
-class CommandHandler(
+open class CommandHandler(
     val name: String = "default",
     val guildId: String? = null
 ) : ListenerAdapter() {
@@ -32,7 +32,7 @@ class CommandHandler(
         }
 
         try {
-            command.executor(event)
+            command.execute(event)
         } catch (ex: Exception) {
             event.reply("Error occurred while executing command.").queue()
             ex.printStackTrace()

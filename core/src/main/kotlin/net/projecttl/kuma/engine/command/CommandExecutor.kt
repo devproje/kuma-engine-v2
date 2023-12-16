@@ -5,5 +5,5 @@ import net.projecttl.kuma.engine.`object`.CommandDataBuilder
 
 interface CommandExecutor {
     val data: CommandDataBuilder
-    fun executor(event: SlashCommandInteractionEvent)
+    fun execute(event: SlashCommandInteractionEvent)
 }

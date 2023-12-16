@@ -4,16 +4,18 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 
 class NewEmbedBuilder {
-    data object NewFieldData {
-        var name: String = ""
-        var value: String = ""
+    data class FieldData(
+        var name: String = "",
+        var value: String = "",
         var inline: Boolean = false
-    }
+    )
 
-    data object NewFooterData {
-        var text: String? = null
+    data class FooterData(
+        var text: String? = null,
         var iconUrl: String? = null
-    }
+    )
+
+    data class Thumbnail(val url: String = "")
 
     private val embed = EmbedBuilder()
 
@@ -27,15 +29,21 @@ class NewEmbedBuilder {
     var image: String? = null
     /** Embed Description */
     var description: String? = null
+    /** Embed Thumbnail */
 
-    fun field(field: NewFieldData.() -> Unit) {
-        val f = NewFieldData.apply(field)
+    fun field(field: FieldData.() -> Unit) {
+        val f = FieldData().apply(field)
         embed.addField(f.name, f.value, f.inline)
     }
 
-    fun footer(footer: NewFooterData.() -> Unit) {
-        val f = NewFooterData.apply(footer)
+    fun footer(footer: FooterData.() -> Unit) {
+        val f = FooterData().apply(footer)
         embed.setFooter(f.text, f.iconUrl)
+    }
+
+    fun thumbnail(thumb: Thumbnail.() -> Unit) {
+        val th = Thumbnail().apply(thumb)
+        embed.setThumbnail(th.url)
     }
 
     fun build(): MessageEmbed {

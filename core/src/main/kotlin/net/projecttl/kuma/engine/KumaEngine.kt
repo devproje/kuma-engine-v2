@@ -5,13 +5,18 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.cache.CacheFlag
+import net.projecttl.kuma.engine.command.CommandExecutor
 import net.projecttl.kuma.engine.command.CommandHandler
+import net.projecttl.kuma.engine.`object`.CommandDataBuilder
 import org.slf4j.LoggerFactory
 
-class KumaEngine(token: String, indent: List<GatewayIntent> = listOf()) {
-    private val builder = JDABuilder.createDefault(token, indent)
+class KumaEngine(token: String, indents: List<GatewayIntent> = listOf(), flags: List<CacheFlag> = listOf()) {
+    private val builder = JDABuilder.createDefault(token, indents)
+        .enableCache(flags)
     private val handlers = mutableListOf<ListenerAdapter>()
     private val commands = mutableListOf<CommandHandler>()
 
@@ -43,8 +48,28 @@ class KumaEngine(token: String, indent: List<GatewayIntent> = listOf()) {
         handlers.remove(handler)
     }
 
+    private object KumaInfo : CommandHandler("kumainfo") {
+        private final val LOGO = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
+        init {
+            addCommands(KumaInfoCommand)
+        }
+
+        private object KumaInfoCommand : CommandExecutor {
+            override val data = CommandDataBuilder().apply {
+                name = "kumainfo"
+                description = "check kuma engine version"
+            }
+
+            override fun execute(event: SlashCommandInteractionEvent) {
+
+            }
+        }
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun build() {
+        addCommandHandler(KumaInfo)
+
         coroutineScope {
             launch {
                 val jda = builder.build()
