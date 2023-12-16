@@ -15,7 +15,7 @@ class NewEmbedBuilder {
         var iconUrl: String? = null
     )
 
-    data class Thumbnail(val url: String = "")
+    data class Thumbnail(var url: String = "")
 
     private val embed = EmbedBuilder()
 

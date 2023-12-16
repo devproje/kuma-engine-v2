@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="net.projecttl.bot.example.MainKt" level="INFO"/>
+        <Logger name="net.projecttl.kuma.engine.KumaEngine" level="INFO"/>
         <Root level="INFO">
             <appender-ref ref="console-log" level="INFO" />
         </Root>

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.Logger
 
 open class CommandHandler(
-    val name: String = "default",
     val guildId: String? = null
 ) : ListenerAdapter() {
     private val commands = mutableListOf<CommandExecutor>()

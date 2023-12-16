@@ -1,8 +1,11 @@
-package org.example.net.projecttl.bot.example
+package net.projecttl.bot.example
 
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.projecttl.kuma.engine.KumaEngine
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("net.projecttl.bot.example.MainKt")
 
 suspend fun main() {
     val bot = KumaEngine(Config.token)
@@ -17,6 +20,6 @@ suspend fun main() {
 
 object Ready : ListenerAdapter() {
     override fun onReady(event: ReadyEvent) {
-        println("Logged in as ${event.jda.selfUser.name}")
+        logger.info("Logged in as ${event.jda.selfUser.name}")
     }
 }
