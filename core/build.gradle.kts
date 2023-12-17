@@ -4,8 +4,8 @@ plugins {
     `maven-publish`
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = rootProject.group
+version = rootProject.version
 
 tasks {
     withType<KotlinCompile> {

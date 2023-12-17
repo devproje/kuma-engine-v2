@@ -9,6 +9,7 @@ private val logger = LoggerFactory.getLogger("net.projecttl.bot.example.MainKt")
 
 suspend fun main() {
     val bot = KumaEngine(Config.token)
+    logger.info(KumaEngine.version())
 //    val cmd = CommandHandler()
 //    cmd.addCommands()
 
