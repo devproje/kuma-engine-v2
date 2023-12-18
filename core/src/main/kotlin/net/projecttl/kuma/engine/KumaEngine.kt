@@ -6,7 +6,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import net.projecttl.kuma.engine.command.CommandExecutor
@@ -15,44 +15,63 @@ import net.projecttl.kuma.engine.`object`.CommandDataBuilder
 import net.projecttl.kuma.engine.`object`.NewEmbedBuilder
 import org.slf4j.LoggerFactory
 import java.io.File
+import kotlin.random.Random
 
 class KumaEngine(token: String, indents: List<GatewayIntent> = listOf(), flags: List<CacheFlag> = listOf()) {
     private val builder = JDABuilder.createDefault(token, indents)
         .enableCache(flags)
-    private val handlers = mutableListOf<ListenerAdapter>()
     private val commands = mutableListOf<CommandHandler>()
-
-    private val logger = LoggerFactory.getLogger("KumaEngine")
+    private val logger = LoggerFactory.getLogger(KumaEngine::class.java)
 
     fun addCommandHandler(vararg command: CommandHandler) {
-        handlers.addAll(command)
         commands.addAll(command)
+        command.forEach {
+            addHandler(it)
+        }
     }
 
-    fun dropCommandHandler(command: CommandHandler) {
-        if (!handlers.contains(command) && !commands.contains(command)) {
-            return
+    fun dropCommandHandler(vararg command: CommandHandler) {
+        commands.removeAll(command.toSet())
+        command.forEach {
+            dropHandler(it)
+        }
+    }
+
+    fun addHandler(vararg handler: EventListener) {
+        handler.forEach {
+            builder.addEventListeners(it)
         }
 
-        handlers.remove(command)
-        commands.remove(command)
     }
 
-    fun addHandler(vararg handler: ListenerAdapter) {
-        handlers.addAll(handler)
-    }
-
-    fun dropHandler(handler: ListenerAdapter) {
-        if (!handlers.contains(handler)) {
-            return
+    fun dropHandler(vararg handler: EventListener) {
+        handler.forEach {
+            builder.removeEventListeners(it)
         }
 
-        handlers.remove(handler)
     }
 
     companion object {
         fun version(): String {
             return File(this::class.java.getResource("/version.txt")!!.toURI()).readText()
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun build(info: Boolean = true) {
+        if (info) {
+            addCommandHandler(KumaInfo)
+        }
+
+        coroutineScope {
+            launch {
+                val jda = builder.build()
+                GlobalScope.launch {
+                    commands.forEach {
+                        it.register(jda, logger)
+                    }
+                }
+            }
         }
     }
 
@@ -90,55 +109,37 @@ class KumaEngine(token: String, indents: List<GatewayIntent> = listOf(), flags: 
 
                     field {
                         name = ":ping_pong: **API LATENCY**"
-                        value = "${event.jda.gatewayPing}ms"
+                        value = "`${event.jda.gatewayPing}ms`"
                         inline = true
                     }
 
                     field {
                         name = ":desktop: **OS**"
-                        value = "${System.getProperty("os.name")}/${System.getProperty("os.arch")}"
+                        value = "`${System.getProperty("os.name").lowercase()}/${System.getProperty("os.arch")}`"
+                        inline = true
                     }
+
+                    field {
+                        name = ":satellite: **BOT SERVER**"
+                        value = "`${event.jda.guilds.size}`"
+                        inline = true
+                    }
+
+                    field {
+                        name = ":file_folder: **SYSTEM PID**"
+                        value = "`${ProcessHandle.current().pid()}`"
+                        inline = true
+                    }
+
+                    footer {
+                        text = event.user.name
+                        iconUrl = event.user.avatarUrl ?: event.user.defaultAvatarUrl
+                    }
+
+                    color = Random.nextInt(0xFFFFFF + 1)
                 }.build()
 
                 event.replyEmbeds(embed).queue()
-//                    {
-//                        Name:   fmt.Sprintf("%s **OS**", emoji.Desktop),
-//                        Value:  fmt.Sprintf("`%s/%s`", runtime.GOOS, runtime.GOARCH),
-//                        Inline: true,
-//                    },
-//                    {
-//                        Name:   fmt.Sprintf("%s **BOT SERVERS**", emoji.Satellite),
-//                        Value:  fmt.Sprintf("`%d`", len(session.State.Guilds)),
-//                        Inline: true,
-//                    },
-//                    {
-//                        Name:   fmt.Sprintf("%s **SYSTEM PID**", emoji.FileFolder),
-//                        Value:  fmt.Sprintf("`%d`", os.Getpid()),
-//                        Inline: true,
-//                    },
-//                },
-//                Color: rand.Intn(0xFFFFFF),
-//                Footer: &discordgo.MessageEmbedFooter{
-//                    Text:    event.Member.User.String(),
-//                    IconURL: event.Member.User.AvatarURL("512x512"),
-//                },
-            }
-        }
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    suspend fun build() {
-        addCommandHandler(KumaInfo)
-
-        coroutineScope {
-            launch {
-                val jda = builder.build()
-
-                GlobalScope.launch {
-                    commands.forEach {
-                        it.register(jda, logger)
-                    }
-                }
             }
         }
     }

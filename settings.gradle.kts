@@ -3,4 +3,4 @@ plugins {
 }
 rootProject.name = "kuma-engine"
 include("core")
-include("example")
+include("test-bot")

@@ -1,4 +1,4 @@
-package net.projecttl.bot.example
+package net.projecttl.bot.test
 
 import net.projecttl.kuma.engine.EnvConfig
 
