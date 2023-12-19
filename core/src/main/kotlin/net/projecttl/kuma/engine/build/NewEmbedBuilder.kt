@@ -1,4 +1,4 @@
-package net.projecttl.kuma.engine.`object`
+package net.projecttl.kuma.engine.build
 
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed

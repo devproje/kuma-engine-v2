@@ -1,8 +1,6 @@
-package net.projecttl.kuma.engine.`object`
+package net.projecttl.kuma.engine.build
 
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.MessageEmbed
-import net.dv8tion.jda.api.entities.MessageEmbed.Thumbnail
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
@@ -32,8 +30,8 @@ class CommandDataBuilder {
         val opt = Option().apply(rawOpt)
         val data = OptionData(opt.type, opt.name, opt.description, opt.required)
         if (opt.choices.isNotEmpty()) {
-            opt.choices.forEach { choice ->
-                data.addChoice(choice.name, choice.value)
+            opt.choices.forEach {
+                choice -> data.addChoice(choice.name, choice.value)
             }
         }
 

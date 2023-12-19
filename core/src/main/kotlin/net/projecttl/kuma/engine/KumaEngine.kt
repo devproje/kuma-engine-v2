@@ -9,10 +9,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
-import net.projecttl.kuma.engine.command.CommandExecutor
-import net.projecttl.kuma.engine.command.CommandHandler
-import net.projecttl.kuma.engine.`object`.CommandDataBuilder
-import net.projecttl.kuma.engine.`object`.NewEmbedBuilder
+import net.projecttl.kuma.engine.model.CommandExecutor
+import net.projecttl.kuma.engine.handler.CommandHandler
+import net.projecttl.kuma.engine.build.CommandDataBuilder
+import net.projecttl.kuma.engine.build.NewEmbedBuilder
 import org.slf4j.LoggerFactory
 import java.io.File
 import kotlin.random.Random
@@ -22,23 +22,14 @@ class KumaEngine(token: String, indents: List<GatewayIntent> = listOf(), flags: 
         .enableCache(flags)
     private val commands = mutableListOf<CommandHandler>()
     private val logger = LoggerFactory.getLogger(KumaEngine::class.java)
-
-    fun addCommandHandler(vararg command: CommandHandler) {
-        commands.addAll(command)
-        command.forEach {
-            addHandler(it)
-        }
-    }
-
-    fun dropCommandHandler(vararg command: CommandHandler) {
-        commands.removeAll(command.toSet())
-        command.forEach {
-            dropHandler(it)
-        }
-    }
+    val command = CommandHandler()
 
     fun addHandler(vararg handler: EventListener) {
         handler.forEach {
+            if (it is CommandHandler) {
+                commands.add(it)
+            }
+
             builder.addEventListeners(it)
         }
 
@@ -46,21 +37,24 @@ class KumaEngine(token: String, indents: List<GatewayIntent> = listOf(), flags: 
 
     fun dropHandler(vararg handler: EventListener) {
         handler.forEach {
+            if (it is CommandHandler) {
+                commands.remove(it)
+            }
+
             builder.removeEventListeners(it)
         }
 
     }
 
     companion object {
-        fun version(): String {
-            return File(this::class.java.getResource("/version.txt")!!.toURI()).readText()
-        }
+        val VERSION: String = File(this::class.java.getResource("/version.txt")!!.toURI()).readText()
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun build(info: Boolean = true) {
+        addHandler(command)
         if (info) {
-            addCommandHandler(KumaInfo)
+            addHandler(KumaInfo)
         }
 
         coroutineScope {
@@ -97,7 +91,7 @@ class KumaEngine(token: String, indents: List<GatewayIntent> = listOf(), flags: 
 
                     field {
                         name = ":electric_plug: **ENGINE VERSION**"
-                        value = "`${version()}`"
+                        value = "`${VERSION}`"
                         inline = true
                     }
 

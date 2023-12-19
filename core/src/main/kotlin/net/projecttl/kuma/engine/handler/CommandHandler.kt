@@ -1,15 +1,14 @@
-package net.projecttl.kuma.engine.command
+package net.projecttl.kuma.engine.handler
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.projecttl.kuma.engine.model.CommandExecutor
 import org.slf4j.Logger
 
-open class CommandHandler(
-    val guildId: String? = null
-) : ListenerAdapter() {
+open class CommandHandler(val guildId: String? = null) : ListenerAdapter() {
     private val commands = mutableListOf<CommandExecutor>()
 
     fun addCommands(vararg commands: CommandExecutor) {
@@ -50,8 +49,8 @@ open class CommandHandler(
                     }
 
                     val guild = jda.getGuildById(guildId) ?: throw Exception("current guild id is not exist")
-
                     guild.upsertCommand(cmd.data.build()).queue()
+
                     logger.info("Registered ${guild.id} command: /${cmd.data.name}")
                 }
             }

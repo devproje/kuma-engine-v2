@@ -2,19 +2,16 @@ package net.projecttl.bot.test
 
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.projecttl.bot.test.command.Ping
+import net.projecttl.bot.test.command.TestOwner
 import net.projecttl.kuma.engine.KumaEngine
-import net.projecttl.kuma.engine.command.CommandHandler
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("MainKt")
 
 suspend fun main() {
     val bot = KumaEngine(Config.token)
-    logger.info(KumaEngine.version())
-    val cmd = CommandHandler()
-    cmd.addCommands()
-
-    bot.addCommandHandler(cmd)
+    bot.command.addCommands(Ping, TestOwner)
     bot.addHandler(Ready)
 
     bot.build()
