@@ -1,28 +1,24 @@
-package kuma
+package command
 
 import (
 	"fmt"
 	"math/rand"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/kuma-engine/command"
 	"github.com/devproje/kuma-engine/utils"
 	"github.com/devproje/kuma-engine/utils/emoji"
-	"github.com/devproje/plog/log"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
 
-var kumaInfo = command.Command{
+var KumaInfo = CommandExecutor{
 	Data: &discordgo.ApplicationCommand{
 		Name:        "kumainfo",
 		Description: "KumaEngine system information",
 	},
-	Usage: "/kumainfo",
-	Execute: func(session *discordgo.Session, event *discordgo.InteractionCreate) error {
+	Executor: func(event *CommandEvent) error {
 		embed := utils.Embed{
 			Title:       fmt.Sprintf("%s **KumaInfo**", emoji.Dart),
 			Description: "KumaEngine system information",
@@ -34,7 +30,7 @@ var kumaInfo = command.Command{
 			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name:   fmt.Sprintf("%s **ENGINE VERSION**", emoji.ElectricPlug),
-					Value:  fmt.Sprintf("`%s`", KUMA_ENGINE_VERSION),
+					Value:  fmt.Sprintf("`%s`", utils.KUMA_ENGINE_VERSION),
 					Inline: true,
 				},
 				{
@@ -44,7 +40,7 @@ var kumaInfo = command.Command{
 				},
 				{
 					Name:   fmt.Sprintf("%s **API LATENCY**", emoji.PingPong),
-					Value:  fmt.Sprintf("`%dms`", session.HeartbeatLatency().Milliseconds()),
+					Value:  fmt.Sprintf("`%dms`", event.Session.HeartbeatLatency().Milliseconds()),
 					Inline: true,
 				},
 				{
@@ -54,7 +50,7 @@ var kumaInfo = command.Command{
 				},
 				{
 					Name:   fmt.Sprintf("%s **BOT SERVERS**", emoji.Satellite),
-					Value:  fmt.Sprintf("`%d`", len(session.State.Guilds)),
+					Value:  fmt.Sprintf("`%d`", len(event.Session.State.Guilds)),
 					Inline: true,
 				},
 				{
@@ -74,7 +70,7 @@ var kumaInfo = command.Command{
 			Embeds: []*discordgo.MessageEmbed{embed},
 		}
 
-		err := session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
+		err := event.Session.InteractionRespond(event.InteractionCreate.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: data,
 		})
@@ -84,31 +80,4 @@ var kumaInfo = command.Command{
 
 		return nil
 	},
-}
-
-// DisableKumaInfo Disable kumainfo command
-func (k *Engine) DisableKumaInfo() {
-	if !k.started {
-		go func() {
-			count := 0
-			for !k.started {
-				time.Sleep(time.Second * 1)
-				count++
-			}
-
-			if k.started {
-				err := command.DropDataManual(k.Session, kumaInfo)
-				if err != nil {
-					log.Errorln(err)
-				}
-
-				log.Infof("KumaInfo disabled: %ds", count)
-			}
-		}()
-
-		command.DropCommand(kumaInfo)
-		return
-	}
-
-	log.Errorln("You cannot use this method, Please try to engine enabled before")
 }

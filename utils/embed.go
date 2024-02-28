@@ -1,13 +1,8 @@
 package utils
 
 import (
-	"fmt"
-
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/kuma-engine/utils/emoji"
 )
-
-const ERROR_COLOR = 0xDD0000
 
 type Embed struct {
 	Title       string
@@ -41,16 +36,4 @@ func (e Embed) Build() *discordgo.MessageEmbed {
 		Author:      e.Author,
 		Fields:      e.Fields,
 	}
-}
-
-func ErrorEmbed(executor *discordgo.User, emoji emoji.Emoji, message string) *discordgo.MessageEmbed {
-	return Embed{
-		Title:       fmt.Sprintf("%s **Error!**", emoji),
-		Description: message,
-		Color:       ERROR_COLOR,
-		Footer: &discordgo.MessageEmbedFooter{
-			Text:    executor.String(),
-			IconURL: executor.AvatarURL("512x512"),
-		},
-	}.Build()
 }
