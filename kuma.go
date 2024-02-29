@@ -24,7 +24,7 @@ type KumaEngine struct {
 	writers []io.Writer
 	mode    mode.EngineMode
 
-	shardID    int
+	shardId    int
 	shardCount int
 	intents    discordgo.Intent
 
@@ -252,7 +252,7 @@ func (k *KumaEngine) SetKumaInfo(value bool) {
 }
 
 func (k *KumaEngine) GetShard() (int, int) {
-	return k.shardID, k.shardCount
+	return k.shardId, k.shardCount
 }
 
 // SetShard: Set the bot shard
@@ -261,7 +261,7 @@ func (k *KumaEngine) SetShard(shardId, shardCount int) {
 		return
 	}
 
-	k.shardID = shardId
+	k.shardId = shardId
 	k.shardCount = shardCount
 }
 
@@ -305,9 +305,9 @@ func (k *KumaEngine) Build() error {
 	log.Traceln("setting bot intents...")
 	bot.Identify.Intents = k.intents
 
-	if (k.shardID != 0) && (k.shardCount != 0) {
+	if (k.shardId != 0) && (k.shardCount != 0) {
 		log.Traceln("sharding bot session...")
-		bot.ShardID = k.shardID
+		bot.ShardID = k.shardId
 		bot.ShardCount = k.shardCount
 	}
 
