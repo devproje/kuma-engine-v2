@@ -13,67 +13,25 @@ import (
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
 
+// Kumainfo: framework info command
 var KumaInfo = CommandExecutor{
 	Data: &discordgo.ApplicationCommand{
 		Name:        "kumainfo",
 		Description: "KumaEngine system information",
 	},
 	Executor: func(event *CommandEvent) error {
-		embed := utils.Embed{
-			Title:       fmt.Sprintf("%s **KumaInfo**", emoji.Dart),
-			Description: "KumaEngine system information",
-			Thumbnail: &discordgo.MessageEmbedThumbnail{
-				URL:    logo,
-				Width:  512,
-				Height: 512,
-			},
-			Fields: []*discordgo.MessageEmbedField{
-				{
-					Name:   fmt.Sprintf("%s **ENGINE VERSION**", emoji.ElectricPlug),
-					Value:  fmt.Sprintf("`%s`", utils.KUMA_ENGINE_VERSION),
-					Inline: true,
-				},
-				{
-					Name:   fmt.Sprintf("%s **GO VERSION**", emoji.PageFacingUp),
-					Value:  fmt.Sprintf("`%s`", runtime.Version()),
-					Inline: true,
-				},
-				{
-					Name:   fmt.Sprintf("%s **API LATENCY**", emoji.PingPong),
-					Value:  fmt.Sprintf("`%dms`", event.Session.HeartbeatLatency().Milliseconds()),
-					Inline: true,
-				},
-				{
-					Name:   fmt.Sprintf("%s **OS**", emoji.Desktop),
-					Value:  fmt.Sprintf("`%s/%s`", runtime.GOOS, runtime.GOARCH),
-					Inline: true,
-				},
-				{
-					Name:   fmt.Sprintf("%s **BOT SERVERS**", emoji.Satellite),
-					Value:  fmt.Sprintf("`%d`", len(event.Session.State.Guilds)),
-					Inline: true,
-				},
-				{
-					Name:   fmt.Sprintf("%s **SYSTEM PID**", emoji.FileFolder),
-					Value:  fmt.Sprintf("`%d`", os.Getpid()),
-					Inline: true,
-				},
-			},
-			Color: rand.Intn(0xFFFFFF),
-			Footer: &discordgo.MessageEmbedFooter{
-				Text:    event.Member.User.String(),
-				IconURL: event.Member.User.AvatarURL("512x512"),
-			},
-		}.Build()
+		embed := utils.EmbedBuilder(fmt.Sprintf("%s **KumaInfo**", emoji.SimpleBuilder("dart")), "KumaEngine system information")
+		embed.SetThumbnail(logo, 512, 512)
+		embed.AddField(fmt.Sprintf("%s **ENGINE VERSION**", emoji.SimpleBuilder("electric_plug")), fmt.Sprintf("`%s`", utils.KUMA_ENGINE_VERSION), true)
+		embed.AddField(fmt.Sprintf("%s **GO VERSION**", emoji.SimpleBuilder("page_facing_up")), fmt.Sprintf("`%s`", runtime.Version()), true)
+		embed.AddField(fmt.Sprintf("%s **API LATENCY**", emoji.SimpleBuilder("ping_pong")), fmt.Sprintf("`%dms`", event.Session.HeartbeatLatency().Milliseconds()), true)
+		embed.AddField(fmt.Sprintf("%s **OS**", emoji.SimpleBuilder("desktop")), fmt.Sprintf("`%s/%s`", runtime.GOOS, runtime.GOARCH), true)
+		embed.AddField(fmt.Sprintf("%s **BOT SERVERS**", emoji.SimpleBuilder("satellite")), fmt.Sprintf("`%d`", len(event.Session.State.Guilds)), true)
+		embed.AddField(fmt.Sprintf("%s **SYSTEM PID**", emoji.SimpleBuilder("file_folder")), fmt.Sprintf("`%d`", os.Getpid()), true)
+		embed.SetColor(rand.Intn(0xFFFFFF))
+		embed.SetFooter(event.Member.User.String(), event.Member.User.AvatarURL("512x512"))
 
-		data := &discordgo.InteractionResponseData{
-			Embeds: []*discordgo.MessageEmbed{embed},
-		}
-
-		err := event.Session.InteractionRespond(event.InteractionCreate.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: data,
-		})
+		err := event.ReplyEmbed(embed, true)
 		if err != nil {
 			return err
 		}

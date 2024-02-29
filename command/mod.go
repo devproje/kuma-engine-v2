@@ -1,7 +1,10 @@
 package command
 
 import (
+	"fmt"
+
 	"github.com/bwmarrin/discordgo"
+	"github.com/devproje/kuma-engine/utils"
 	"github.com/devproje/plog/log"
 )
 
@@ -22,7 +25,12 @@ type CommandEvent struct {
 	User              *discordgo.User
 }
 
+// GetCommand: get command by name
 func (c *CommandHandler) GetCommand(name string) *CommandExecutor {
+	if c.Commands == nil {
+		return nil
+	}
+
 	for _, command := range c.Commands {
 		if command.Data.Name == name {
 			return command
@@ -31,10 +39,12 @@ func (c *CommandHandler) GetCommand(name string) *CommandExecutor {
 	return nil
 }
 
+// AddCommand: add command to the command handler
 func (c *CommandHandler) AddCommand(command CommandExecutor) {
 	c.Commands = append(c.Commands, &command)
 }
 
+// DropCommand: drop command from the command handler
 func (c *CommandHandler) DropCommand(name string) {
 	for i, command := range c.Commands {
 		if command.Data.Name == name {
@@ -43,7 +53,8 @@ func (c *CommandHandler) DropCommand(name string) {
 	}
 }
 
-func (c *CommandHandler) BuildHandler(session *discordgo.Session, event *discordgo.InteractionCreate) {
+// BuildHandler: build command handler
+func (c *CommandHandler) Build(session *discordgo.Session, event *discordgo.InteractionCreate) {
 	if event.Type != discordgo.InteractionApplicationCommand {
 		return
 	}
@@ -77,17 +88,74 @@ func (c *CommandHandler) BuildHandler(session *discordgo.Session, event *discord
 	}
 }
 
+// RegisterCommand: register command to the discord
 func (c *CommandHandler) RegisterCommand(session *discordgo.Session, guildId string) {
 	for _, command := range c.Commands {
 		log.Infof("Registering command: /%s\n", command.Data.Name)
-		session.ApplicationCommandCreate("", c.GuildId, command.Data)
+		_, err := session.ApplicationCommandCreate("", c.GuildId, command.Data)
+		if err != nil {
+			log.Errorf("An error occurred while registering the command: /%s\n", command.Data.Name)
+			continue
+		}
 	}
 }
 
+// UnregisterCommand: unregister command from the discord
 func (c *CommandHandler) UnregisterCommand(session *discordgo.Session, guildId string) {
 	cmds, _ := session.ApplicationCommands("", c.GuildId)
 	for i, command := range cmds {
-		log.Infof("Unregistering command (%d/%d)\n", i+1, len(cmds))
-		session.ApplicationCommandDelete("", c.GuildId, command.ID)
+		var msg = "Unregistering global command"
+		if command.GuildID != "" {
+			msg = fmt.Sprintf("Unregistering %s guild's command", command.GuildID)
+		}
+
+		log.Infof("%s (%d/%d)\n", msg, i+1, len(cmds))
+		err := session.ApplicationCommandDelete("", c.GuildId, command.ID)
+		if err != nil {
+			log.Errorf("An error occurred while unregistering the command: /%s\n", command.Name)
+			continue
+		}
 	}
+}
+
+// Reply: send string message to the command
+func (ev *CommandEvent) Reply(content string, ephemeral bool) error {
+	data := &discordgo.InteractionResponseData{
+		Content: content,
+	}
+
+	if ephemeral {
+		data.Flags = 1 << 6
+	}
+
+	return ev.Session.InteractionRespond(ev.InteractionCreate.Interaction, &discordgo.InteractionResponse{
+		Type: 4,
+		Data: data,
+	})
+}
+
+// ReplyEmbed: send embed message to the command
+func (ev *CommandEvent) ReplyEmbed(embed *utils.Embed, ephemeral bool) error {
+	return ev.ReplyEmbeds([]*utils.Embed{embed}, ephemeral)
+}
+
+// ReplyEmbeds: send embed messages to the command
+func (ev *CommandEvent) ReplyEmbeds(embeds []*utils.Embed, ephemeral bool) error {
+	var me []*discordgo.MessageEmbed
+	for _, embed := range embeds {
+		me = append(me, embed.Build())
+	}
+
+	data := &discordgo.InteractionResponseData{
+		Embeds: me,
+	}
+
+	if ephemeral {
+		data.Flags = 1 << 6
+	}
+
+	return ev.Session.InteractionRespond(ev.InteractionCreate.Interaction, &discordgo.InteractionResponse{
+		Type: 4,
+		Data: data,
+	})
 }

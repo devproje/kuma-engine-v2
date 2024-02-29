@@ -2,10 +2,13 @@
 .DS_Store
 token.txt
 log.txt
+.env
+!.env.example
 
 # IDE configuration directory
 .idea/
 .fleet/
+.vscode/
 
 # Test Directory
 test/

@@ -2,25 +2,26 @@ package emoji
 
 import "fmt"
 
+// Emoji: emoji data
 type Emoji string
 
-type Data struct {
-	Name      string
-	Id        string
-	Animation bool
+// SimpleBuilder: build simple emoji
+func SimpleBuilder(name string) Emoji {
+	return EmojiBuilder(name, "", false)
 }
 
-func (d Data) EmojiBuilder() Emoji {
+// EmojiBuilder: build emoji
+func EmojiBuilder(name, id string, animate bool) Emoji {
 	var str = "<"
-	if d.Animation {
+	if animate {
 		str += "a"
 	}
 
-	if d.Id == "" {
-		str = fmt.Sprintf(":%s:", d.Name)
+	if id == "" {
+		str = fmt.Sprintf(":%s:", name)
 		return Emoji(str)
 	}
 
-	str += fmt.Sprintf(":%s:%s>", d.Name, d.Id)
+	str += fmt.Sprintf(":%s:%s>", name, id)
 	return Emoji(str)
 }
