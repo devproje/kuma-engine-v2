@@ -8,9 +8,9 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/kuma-engine/command"
-	"github.com/devproje/kuma-engine/mode"
-	"github.com/devproje/kuma-engine/utils"
+	"github.com/devproje/kuma-engine/v2/command"
+	"github.com/devproje/kuma-engine/v2/mode"
+	"github.com/devproje/kuma-engine/v2/utils"
 	"github.com/devproje/plog/level"
 	"github.com/devproje/plog/log"
 )

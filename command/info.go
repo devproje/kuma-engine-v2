@@ -7,8 +7,8 @@ import (
 	"runtime"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/devproje/kuma-engine/utils"
-	"github.com/devproje/kuma-engine/utils/emoji"
+	"github.com/devproje/kuma-engine/v2/utils"
+	"github.com/devproje/kuma-engine/v2/utils/emoji"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"

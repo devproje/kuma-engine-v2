@@ -1,4 +1,4 @@
-module github.com/devproje/kuma-engine
+module github.com/devproje/kuma-engine/v2
 
 go 1.19
 
