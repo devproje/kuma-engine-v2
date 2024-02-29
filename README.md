@@ -1,8 +1,8 @@
 <br/>
 
-![License](https://img.shields.io/github/license/devproje/kuma-engine)
-[![GoDoc](https://godoc.org/github.com/devproje/kuma-engine?status.svg)](https://godoc.org/github.com/devproje/kuma-engine)
-<img width="200" height="200" align="right" src="https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png" alt=""/>
+![License](https://img.shields.io/github/license/devproje/kuma-engine-v2)
+[![GoDoc](https://godoc.org/github.com/devproje/kuma-engine-v2?status.svg)](https://godoc.org/github.com/devproje/kuma-engine)
+<img width="200" height="200" align="right" src="https://github.com/devproje/kuma-engine-v2/raw/master/assets/kuma-engine-logo.png" alt=""/>
 
 # KumaEngine
 Personal discordgo extend library
@@ -11,7 +11,7 @@ Personal discordgo extend library
 
 ### 1. Installation
 ```shell
-go get -u github.com/devproje/kuma-engine
+go get -u github.com/devproje/kuma-engine-v2
 ```
 
 ### 2. Example code
@@ -25,14 +25,13 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine"
-	"github.com/devproje/kuma-engine/command"
-	"github.com/devproje/kuma-engine/utils"
+	"github.com/devproje/kuma-engine/v2/command"
+	"github.com/devproje/kuma-engine/v2/utils"
 	"github.com/devproje/plog/log"
 )
 
 var (
 	token = *flag.String("token", "", "Type Discord Token")
-	e     *kuma.Engine
 )
 
 func ready(session *discordgo.Session, ready *discordgo.Ready) {
@@ -40,29 +39,12 @@ func ready(session *discordgo.Session, ready *discordgo.Ready) {
 }
 
 func main() {
-	flag.Parse()
-	var err error
-	engine := &kuma.Engine{
-		Token: token,
-		Color: 0xFF0000,
-	}
-	engine, err = engine.Create()
-	if err != nil {
-		plog.Fatalln(err)
-	}
-	
-	engine.AddEventOnce(ready)
+	builder := kuma.EngineBuilder()
+	builder.SetToken(token)
+	builder.AddEventOnceListener(ready)
+	builder.SetKumaInfo(true)
 
-	err = engine.Start()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	e = engine
-	log.Infoln("Bot is now running. Press CTRL-C to exit.")
-	engine.CreateInterruptSignal()
-
-	err = engine.Stop()
+	err := builder.Build()
 	if err != nil {
 		log.Fatalln(err)
 	}
