@@ -9,6 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/v2/utils"
 	"github.com/devproje/kuma-engine/v2/utils/emoji"
+	"github.com/devproje/kuma-engine/v2/version"
 )
 
 const logo = "https://github.com/devproje/kuma-engine/raw/master/assets/kuma-engine-logo.png"
@@ -22,7 +23,7 @@ var KumaInfo = CommandExecutor{
 	Executor: func(event *CommandEvent) error {
 		embed := utils.EmbedBuilder(fmt.Sprintf("%s **KumaInfo**", emoji.SimpleBuilder("dart")), "KumaEngine system information")
 		embed.SetThumbnail(logo, 512, 512)
-		embed.AddField(fmt.Sprintf("%s **ENGINE VERSION**", emoji.SimpleBuilder("electric_plug")), fmt.Sprintf("`%s`", utils.KUMA_ENGINE_VERSION), true)
+		embed.AddField(fmt.Sprintf("%s **ENGINE VERSION**", emoji.SimpleBuilder("electric_plug")), fmt.Sprintf("`%s`", version.KUMA_ENGINE_VERSION), true)
 		embed.AddField(fmt.Sprintf("%s **GO VERSION**", emoji.SimpleBuilder("page_facing_up")), fmt.Sprintf("`%s`", runtime.Version()), true)
 		embed.AddField(fmt.Sprintf("%s **API LATENCY**", emoji.SimpleBuilder("ping_pong")), fmt.Sprintf("`%dms`", event.Session.HeartbeatLatency().Milliseconds()), true)
 		embed.AddField(fmt.Sprintf("%s **OS**", emoji.SimpleBuilder("desktop")), fmt.Sprintf("`%s/%s`", runtime.GOOS, runtime.GOARCH), true)

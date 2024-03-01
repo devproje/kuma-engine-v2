@@ -25,3 +25,7 @@ func EmojiBuilder(name, id string, animate bool) Emoji {
 	str += fmt.Sprintf(":%s:%s>", name, id)
 	return Emoji(str)
 }
+
+func (e Emoji) Build() string {
+	return string(e)
+}

@@ -10,7 +10,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/v2/command"
 	"github.com/devproje/kuma-engine/v2/mode"
-	"github.com/devproje/kuma-engine/v2/utils"
+	"github.com/devproje/kuma-engine/v2/version"
 	"github.com/devproje/plog/level"
 	"github.com/devproje/plog/log"
 )
@@ -282,7 +282,7 @@ func (k *KumaEngine) Build() error {
 	k.init()
 	k.loadMode()
 
-	log.Infof("Loading KumaEngine %s\n", utils.KUMA_ENGINE_VERSION)
+	log.Infof("Loading KumaEngine %s\n", version.KUMA_ENGINE_VERSION)
 
 	log.Traceln("creating bot session...")
 	bot, err := discordgo.New(fmt.Sprintf("Bot %s", k.Token))
