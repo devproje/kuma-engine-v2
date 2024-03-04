@@ -1,5 +1,5 @@
 #!/bin/sh
-MODULE=github.com/devproje/kuma-engine/v2
+MODULE=github.com/devproje/kuma-engine/v2@$1
 PROXY_URL=proxy.golang.org
 
 if [ "$1" == "default" ]; then

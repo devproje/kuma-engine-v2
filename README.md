@@ -32,6 +32,20 @@ import (
 
 var (
 	token = *flag.String("token", "", "Type Discord Token")
+	test  = command.Executor{
+		Data: &discordgo.ApplicationCommand{
+			Name:        "test",
+			Description: "Test Command",
+		},
+        Execute: func(ev *command.Event) error {
+            err := ev.Reply("Test command")
+			if err != nil {
+				return err
+            }
+			
+			return nil
+        },
+    }
 )
 
 func ready(session *discordgo.Session, ready *discordgo.Ready) {
@@ -41,6 +55,8 @@ func ready(session *discordgo.Session, ready *discordgo.Ready) {
 func main() {
 	builder := kuma.EngineBuilder()
 	builder.SetToken(token)
+	
+	builder.AddCommand(test)
 	builder.AddEventOnceListener(ready)
 	builder.SetKumaInfo(true)
 
