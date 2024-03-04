@@ -20,72 +20,72 @@ type Embed struct {
 	Author      *discordgo.MessageEmbedAuthor
 }
 
-// EmbedBuilder: general embed builder
+// EmbedBuilder general embed builder
 func EmbedBuilder(title, description string) *Embed {
 	return &Embed{Title: title, Description: description}
 }
 
-// SetTitle: set title
+// SetTitle set title
 func (e *Embed) SetTitle(title string) *Embed {
 	e.Title = title
 	return e
 }
 
-// SetDescription: set description
+// SetDescription set description
 func (e *Embed) SetDescription(description string) *Embed {
 	e.Description = description
 	return e
 }
 
-// SetColor: set color
+// SetColor set color
 func (e *Embed) SetColor(color int) *Embed {
 	e.Color = color
 	return e
 }
 
-// SetURL: set url
+// SetURL set url
 func (e *Embed) SetURL(url string) *Embed {
 	e.URL = url
 	return e
 }
 
-// SetType: set type
+// SetType set type
 func (e *Embed) SetType(embedType discordgo.EmbedType) *Embed {
 	e.Type = embedType
 	return e
 }
 
-// SetTimestamp: set timestamp
+// SetTimestamp set timestamp
 func (e *Embed) SetTimestamp(timestamp string) *Embed {
 	e.Timestamp = timestamp
 	return e
 }
 
-// SetImage: set image
+// SetImage set image
 func (e *Embed) SetImage(url string, w, h int) *Embed {
 	e.Image = &discordgo.MessageEmbedImage{URL: url, Width: w, Height: h}
 	return e
 }
 
-// SetAuthor: set author
+// SetAuthor set author
 func (e *Embed) SetAuthor(name, url, icon string) *Embed {
 	e.Author = &discordgo.MessageEmbedAuthor{Name: name, URL: url, IconURL: icon}
 	return e
 }
 
-// SetProvider: set provider
+// SetProvider set provider
 func (e *Embed) SetProvider(name, url string) *Embed {
 	e.Provider = &discordgo.MessageEmbedProvider{Name: name, URL: url}
 	return e
 }
 
-// SetFooter: set footer
+// SetFooter set footer
 func (e *Embed) SetFooter(text, icon string) *Embed {
 	e.Footer = &discordgo.MessageEmbedFooter{Text: text, IconURL: icon}
 	return e
 }
 
-// AddField: add field
+// AddField add field
 func (e *Embed) AddField(name, value string, inline bool) *Embed {
 	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
 		Name:   name,
@@ -96,30 +96,30 @@ func (e *Embed) AddField(name, value string, inline bool) *Embed {
 	return e
 }
 
-// SetFields: set fields
+// SetFields set fields
 func (e *Embed) SetFields(fields []*discordgo.MessageEmbedField) *Embed {
 	e.Fields = fields
 	return e
 }
 
-// SetThumbnail: set thumbnail
+// SetThumbnail set thumbnail
 func (e *Embed) SetThumbnail(url string, w, h int) *Embed {
 	e.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: url, Width: w, Height: h}
 	return e
 }
 
-// SetVideo: set video
+// SetVideo set video
 func (e *Embed) SetVideo(url string, w, h int) *Embed {
 	e.Video = &discordgo.MessageEmbedVideo{
-		URL:    "",
-		Width:  0,
-		Height: 0,
+		URL:    url,
+		Width:  w,
+		Height: h,
 	}
 
 	return e
 }
 
-// Build: build embed
+// Build building embed
 func (e *Embed) Build() *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
 		URL:         e.URL,

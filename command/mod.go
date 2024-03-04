@@ -2,31 +2,31 @@ package command
 
 import (
 	"fmt"
-
 	"github.com/bwmarrin/discordgo"
 	"github.com/devproje/kuma-engine/v2/utils"
 	"github.com/devproje/plog/log"
 )
 
-type CommandHandler struct {
+type Handler struct {
 	GuildId  string // Guild Command
-	Commands []*CommandExecutor
+	Commands []*Executor
 }
 
-type CommandExecutor struct {
-	Data     *discordgo.ApplicationCommand
-	Executor func(event *CommandEvent) error
+type Executor struct {
+	Data    *discordgo.ApplicationCommand
+	Execute func(event *Event) error
 }
 
-type CommandEvent struct {
-	Session           *discordgo.Session
-	InteractionCreate *discordgo.InteractionCreate
-	Member            *discordgo.Member
-	User              *discordgo.User
+type Event struct {
+	Session     *discordgo.Session
+	Ev          *discordgo.InteractionCreate
+	Member      *discordgo.Member
+	User        *discordgo.User
+	Interaction *discordgo.Interaction
 }
 
-// GetCommand: get command by name
-func (c *CommandHandler) GetCommand(name string) *CommandExecutor {
+// GetCommand get command by name
+func (c *Handler) GetCommand(name string) *Executor {
 	if c.Commands == nil {
 		return nil
 	}
@@ -39,22 +39,24 @@ func (c *CommandHandler) GetCommand(name string) *CommandExecutor {
 	return nil
 }
 
-// AddCommand: add command to the command handler
-func (c *CommandHandler) AddCommand(command CommandExecutor) {
+// AddCommand add command to the command handler
+func (c *Handler) AddCommand(command Executor) {
+	log.Debugf("adding command: /%s", command.Data.Name)
 	c.Commands = append(c.Commands, &command)
 }
 
-// DropCommand: drop command from the command handler
-func (c *CommandHandler) DropCommand(name string) {
+// DropCommand drop command from the command handler
+func (c *Handler) DropCommand(name string) {
 	for i, command := range c.Commands {
 		if command.Data.Name == name {
+			log.Debugf("dropping command: /%s", command.Data.Name)
 			c.Commands = append(c.Commands[:i], c.Commands[i+1:]...)
 		}
 	}
 }
 
-// BuildHandler: build command handler
-func (c *CommandHandler) Build(session *discordgo.Session, event *discordgo.InteractionCreate) {
+// Build building command handler
+func (c *Handler) Build(session *discordgo.Session, event *discordgo.InteractionCreate) {
 	if event.Type != discordgo.InteractionApplicationCommand {
 		return
 	}
@@ -64,62 +66,102 @@ func (c *CommandHandler) Build(session *discordgo.Session, event *discordgo.Inte
 		return
 	}
 
-	if c.GuildId != "" {
-		log.Debugf("using \"%s\" guild's command by <@%s>: /%s", event.GuildID, event.Member.User.ID, event.ApplicationCommandData().Name)
+	var debug string
+	if session.ShardCount > 0 {
+		if c.GuildId != "" {
+			debug = fmt.Sprintf(
+				"using \"%s\" guild's command by <@%s> with #%d shard: /%s",
+				event.GuildID, event.Member.User.ID,
+				session.ShardID,
+				event.ApplicationCommandData().Name,
+			)
+		} else {
+			debug = fmt.Sprintf("using global command by <@%s> with #%d shard: /%s", event.Member.User.ID, session.ShardID, event.ApplicationCommandData().Name)
+		}
 	} else {
-		log.Debugf("using global command by <@%s>: /%s", event.Member.User.ID, event.ApplicationCommandData().Name)
+		if c.GuildId != "" {
+			debug = fmt.Sprintf("using \"%s\" guild's command by <@%s>: /%s", event.GuildID, event.Member.User.ID, event.ApplicationCommandData().Name)
+		} else {
+			debug = fmt.Sprintf("using global command by <@%s>: /%s", event.Member.User.ID, event.ApplicationCommandData().Name)
+		}
 	}
+	log.Debugln(debug)
 
-	err := command.Executor(&CommandEvent{
-		Session:           session,
-		InteractionCreate: event,
-		Member:            event.Member,
-		User:              event.Member.User,
+	err := command.Execute(&Event{
+		Session:     session,
+		Ev:          event,
+		Member:      event.Member,
+		User:        event.Member.User,
+		Interaction: event.Interaction,
 	})
 	if err != nil {
-		session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
+		err = session.InteractionRespond(event.Interaction, &discordgo.InteractionResponse{
 			Type: 4,
 			Data: &discordgo.InteractionResponseData{
 				Content: "An error occurred while executing the command.",
 				Flags:   1 << 6,
 			},
 		})
+		if err != nil {
+			log.Errorln(err)
+			return
+		}
 		log.Errorln(err)
 	}
 }
 
-// RegisterCommand: register command to the discord
-func (c *CommandHandler) RegisterCommand(session *discordgo.Session, guildId string) {
+// RegisterCommand register command to the discord
+func (c *Handler) RegisterCommand(session *discordgo.Session) {
 	for _, command := range c.Commands {
-		log.Infof("Registering command: /%s\n", command.Data.Name)
-		_, err := session.ApplicationCommandCreate("", c.GuildId, command.Data)
+		_, err := session.ApplicationCommandCreate(session.State.User.ID, c.GuildId, command.Data)
 		if err != nil {
-			log.Errorf("An error occurred while registering the command: /%s\n", command.Data.Name)
 			continue
 		}
 	}
 }
 
-// UnregisterCommand: unregister command from the discord
-func (c *CommandHandler) UnregisterCommand(session *discordgo.Session, guildId string) {
-	cmds, _ := session.ApplicationCommands("", c.GuildId)
-	for i, command := range cmds {
-		var msg = "Unregistering global command"
-		if command.GuildID != "" {
-			msg = fmt.Sprintf("Unregistering %s guild's command", command.GuildID)
-		}
-
-		log.Infof("%s (%d/%d)\n", msg, i+1, len(cmds))
-		err := session.ApplicationCommandDelete("", c.GuildId, command.ID)
+// UnregisterCommand unregister command from the discord
+func (c *Handler) UnregisterCommand(session *discordgo.Session) {
+	cmds, _ := session.ApplicationCommands(session.State.User.ID, c.GuildId)
+	for _, command := range cmds {
+		err := session.ApplicationCommandDelete(session.State.User.ID, command.GuildID, command.ID)
 		if err != nil {
-			log.Errorf("An error occurred while unregistering the command: /%s\n", command.Name)
 			continue
 		}
 	}
 }
 
-// Reply: send string message to the command
-func (ev *CommandEvent) Reply(content string, ephemeral bool) error {
+// Reply send string message to the command
+func (ev *Event) Reply(content string) error {
+	return send(ev, content, false)
+}
+
+// ReplyEphemeral send string message to the command with ephemeral
+func (ev *Event) ReplyEphemeral(content string) error {
+	return send(ev, content, true)
+}
+
+// ReplyEmbed send embed message to the command
+func (ev *Event) ReplyEmbed(embed *utils.Embed, ephemeral bool) error {
+	return ev.ReplyEmbeds([]*utils.Embed{embed}, false)
+}
+
+// ReplyEmbedEphemeral send embed message to the command with ephemeral
+func (ev *Event) ReplyEmbedEphemeral(embed *utils.Embed) error {
+	return ev.ReplyEmbedsEphemeral([]*utils.Embed{embed})
+}
+
+// ReplyEmbeds send embed messages to the command
+func (ev *Event) ReplyEmbeds(embeds []*utils.Embed, ephemeral bool) error {
+	return sendEmbeds(ev, embeds, false)
+}
+
+// ReplyEmbedsEphemeral send embed messages to the command with ephemeral
+func (ev *Event) ReplyEmbedsEphemeral(embeds []*utils.Embed) error {
+	return sendEmbeds(ev, embeds, true)
+}
+
+func send(ev *Event, content string, ephemeral bool) error {
 	data := &discordgo.InteractionResponseData{
 		Content: content,
 	}
@@ -128,19 +170,13 @@ func (ev *CommandEvent) Reply(content string, ephemeral bool) error {
 		data.Flags = 1 << 6
 	}
 
-	return ev.Session.InteractionRespond(ev.InteractionCreate.Interaction, &discordgo.InteractionResponse{
+	return ev.Session.InteractionRespond(ev.Interaction, &discordgo.InteractionResponse{
 		Type: 4,
 		Data: data,
 	})
 }
 
-// ReplyEmbed: send embed message to the command
-func (ev *CommandEvent) ReplyEmbed(embed *utils.Embed, ephemeral bool) error {
-	return ev.ReplyEmbeds([]*utils.Embed{embed}, ephemeral)
-}
-
-// ReplyEmbeds: send embed messages to the command
-func (ev *CommandEvent) ReplyEmbeds(embeds []*utils.Embed, ephemeral bool) error {
+func sendEmbeds(ev *Event, embeds []*utils.Embed, ephemeral bool) error {
 	var me []*discordgo.MessageEmbed
 	for _, embed := range embeds {
 		me = append(me, embed.Build())
@@ -154,7 +190,7 @@ func (ev *CommandEvent) ReplyEmbeds(embeds []*utils.Embed, ephemeral bool) error
 		data.Flags = 1 << 6
 	}
 
-	return ev.Session.InteractionRespond(ev.InteractionCreate.Interaction, &discordgo.InteractionResponse{
+	return ev.Session.InteractionRespond(ev.Interaction, &discordgo.InteractionResponse{
 		Type: 4,
 		Data: data,
 	})

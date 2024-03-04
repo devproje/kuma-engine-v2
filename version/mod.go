@@ -1,4 +1,4 @@
 package version
 
-// KUMA_ENGINE_VERSION: kuma engine version
-const KUMA_ENGINE_VERSION = "v2.0.2"
+// KumaEngineVersion kuma engine version
+const KumaEngineVersion = "v2.1.0"
